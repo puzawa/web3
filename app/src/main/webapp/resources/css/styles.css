@@ -222,38 +222,3 @@ body {
     transform: scale(1.05);
 }
 
-.button-column {
-    display: flex;
-    flex-direction: column;
-    width: 70px; /* wider column */
-    background-color: #f9f5ff;
-    padding: 5px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(128, 0, 128, 0.2);
-}
-
-.button-column button {
-    margin: 4px 0;
-    padding: 6px 10px; /* wider buttons */
-    cursor: pointer;
-    border: none;
-    border-radius: 6px;
-    background-color: #cfa5ff;
-    color: #3a0050;
-    font-weight: 500;
-    font-size: 12px;
-    transition: all 0.2s ease;
-}
-
-.button-column button:hover {
-    background-color: #a678ff;
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 2px 6px rgba(128, 0, 128, 0.3);
-}
-
-.button-column button.selected {
-    background-color: #8a2be2; /* vibrant purple */
-    color: white;
-    box-shadow: 0 0 10px rgba(138, 43, 226, 0.6);
-}

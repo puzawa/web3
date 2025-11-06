@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ace="http://www.icefaces.org/icefaces/components">
+      xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>Web Lab 3</title>
     <meta charset="UTF-8"/>
@@ -25,9 +25,56 @@
             </div>
     </header>
 
+    <div class="form">
+        <div class="form__body">
+            <h:form id="pointForm">
+
+                <p:outputLabel for="x" value="X:" />
+                <p:spinner id="x" value="0" min="-5" max="5" step="0.1"/>
+
+                <p:outputLabel for="y" value="Y:" />
+                <p:inputText id="y" value="0"/>
+
+                <label class="form-checkbox-text">
+                    <p:selectBooleanCheckbox id="r1"/>
+                    R1
+                </label>
+
+                <label class="form-checkbox-text">
+                    <p:selectBooleanCheckbox id="r2"/>
+                    R2
+                </label>
+
+                <p:commandButton value="Submit" type="button" onclick="submitForm()"/>
+
+            </h:form>
+        </div>
+    </div>
+    <script>
+        function submitForm() {
+            const x = parseFloat(document.getElementById('pointForm:x_input').value);
+            const y = parseFloat(document.getElementById('pointForm:y').value);
+            const r1 = document.getElementById('pointForm:r1_input').checked;
+            const r2 = document.getElementById('pointForm:r2_input').checked;
+
+            console.log({x, y, r1, r2});
+            alert(`X=${x}, Y=${y}, R1=${r1}, R2=${r2}`);
+
+            const canvas = document.getElementById('coordinate-plane');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#A084FF';
+            ctx.beginPath();
+            const cx = canvas.width/2 + x*40;
+            const cy = canvas.height/2 - y*40;
+            ctx.arc(cx, cy, 5, 0, 2*Math.PI);
+            ctx.fill();
+        }
+    </script>
+
     <div class="image-container" style="text-align: center">
         <h3>График области</h3>
-        <canvas id="coordinate-plane" width="450" height="450">
+        <canvas id="coordinate-plane">
         </canvas>
     </div>
 </h:body>
