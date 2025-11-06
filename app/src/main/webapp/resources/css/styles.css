@@ -14,25 +14,31 @@ body {
     min-height: 100vh;
 }
 
-.container {
-    max-width: 1620px;
-    padding: 0 15px;
-    font-family: Arial, sans-serif;
-    font-size: 32px;
-    font-style: normal;
-    line-height: normal;
-    margin: 0 auto;
-}
 
 .header, .footer {
     background-color: #3D3D3D;
     color: #FFFFFF;
 }
 
-.header__inner {
+.header-inner {
     display: flex;
     justify-content: space-evenly;
     padding: 15px 0;
+    font-family: cursive;
+    font-size: 32px;
+    width: 100%;
+    color: #fafafa;
+}
+
+.header-inner .option {
+    font-style: italic;
+    text-align: center;
+    color: #ff6600;
+}
+
+.header-inner #student-name {
+    font-weight: bold;
+    color: #a093f4;
 }
 
 .main {
@@ -118,15 +124,15 @@ body {
 }
 
 .form-submit {
-     padding: 10px 20px;
-     background-color: #9B7BFF;
-     color: #fff;
-     border: none;
-     border-radius: 8px;
-     font-weight: bold;
-     cursor: pointer;
-     transition: background-color 0.3s, transform 0.2s;
- }
+    padding: 10px 20px;
+    background-color: #9B7BFF;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
 
 .form-submit:not(:disabled):hover {
     background-color: #607BFF;
@@ -194,30 +200,6 @@ body {
     padding: 8px;
     border-bottom: 1px solid #eee;
 
-}
-
-#student-name {
-    font-weight: bold;
-    color: #a093f4;
-    font-size: 36px;
-}
-
-.header__inner {
-    font-family: cursive;
-    color: #fafafa;
-    font-size: 32px;
-    width: 100%;
-    margin: 20px 0;
-}
-
-.header__inner td {
-    padding: 5px 10px;
-}
-
-td[class="option"] {
-    color: #ff6600;
-    font-style: italic;
-    text-align: center;
 }
 
 .home-link {
