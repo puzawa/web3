@@ -2,78 +2,71 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:p="http://primefaces.org/ui">
 <h:head>
     <title>Web Lab 3</title>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-    <h:outputStylesheet library="css" name="reset.css" />
-    <h:outputStylesheet library="css" name="styles.css" />
+    <h:outputStylesheet library="css" name="reset.css"/>
+    <h:outputStylesheet library="css" name="styles.css"/>
 
-    <h:outputScript library="js" name="canvas.js" target="head" />
-    <h:outputScript library="js" name="main_init.js" target="head" />
+    <h:outputScript library="js" name="ui_getters.js" target="head"/>
+    <h:outputScript library="js" name="canvas.js" target="head"/>
+    <h:outputScript library="js" name="main_init.js" target="head"/>
 
 </h:head>
 
 <h:body styleClass="body" id="mainbody">
     <header class="header">
-            <div class="header-inner">
-                <div id="student-name">Плотников Алексей Алексеевич</div>
-                <div class="group">P3214</div>
-                <div class="option">Вариант 9943</div>
-            </div>
+        <div class="header-inner">
+            <div id="student-name">Плотников Алексей Алексеевич</div>
+            <div class="group">P3214</div>
+            <div class="option">Вариант 9943</div>
+        </div>
     </header>
 
     <div class="form">
-        <div class="form__body">
-            <h:form id="pointForm">
+        <h:form id="pointForm">
+            <p:panelGrid columns="1" style="gap: 10px;">
 
-                <p:outputLabel for="x" value="X:" />
-                <p:spinner id="x" value="0" min="-5" max="5" step="0.1"/>
+                <p:spinner id="horizontalAfter" value="#{spinnerView.number}" buttons="horizontal-after"
+                           upButtonStyleClass="ui-button-success" downButtonStyleClass="ui-button-danger"
+                           min="-5" max="5" stepFactor="0.1" rotate="true" onkeydown="return false;"
+                           onchange="onClickSpinner(this)"
+                />
 
-                <p:outputLabel for="y" value="Y:" />
-                <p:inputText id="y" value="0"/>
+                <h:outputLabel for="textInput" value="Enter something: "/>
+                <h:inputText id="textInput" value="#{bean.inputValue}"/>
 
-                <label class="form-checkbox-text">
-                    <p:selectBooleanCheckbox id="r1"/>
-                    R1
-                </label>
+                <h:panelGroup id="checkboxes">
+                    <ui:repeat var="option" value="#{checkboxView.options}">
+                        <h:selectBooleanCheckbox
+                                styleClass="r-select-checkbox"
+                                onclick="onClickCheckbox(this)">
+                            <f:passThroughAttribute name="data-label" value="#{option}"/>
+                        </h:selectBooleanCheckbox>
+                        #{option}<br/>
+                    </ui:repeat>
 
-                <label class="form-checkbox-text">
-                    <p:selectBooleanCheckbox id="r2"/>
-                    R2
-                </label>
+                </h:panelGroup>
+
+
 
                 <p:commandButton value="Submit" type="button" onclick="submitForm()"/>
 
-            </h:form>
-        </div>
+            </p:panelGrid>
+        </h:form>
+
     </div>
     <script>
         function submitForm() {
-            const x = parseFloat(document.getElementById('pointForm:x_input').value);
-            const y = parseFloat(document.getElementById('pointForm:y').value);
-            const r1 = document.getElementById('pointForm:r1_input').checked;
-            const r2 = document.getElementById('pointForm:r2_input').checked;
 
-            console.log({x, y, r1, r2});
-            alert(`X=${x}, Y=${y}, R1=${r1}, R2=${r2}`);
-
-            const canvas = document.getElementById('coordinate-plane');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#A084FF';
-            ctx.beginPath();
-            const cx = canvas.width/2 + x*40;
-            const cy = canvas.height/2 - y*40;
-            ctx.arc(cx, cy, 5, 0, 2*Math.PI);
-            ctx.fill();
         }
     </script>
 
     <div class="image-container" style="text-align: center">
-        <h3>График области</h3>
         <canvas id="coordinate-plane">
         </canvas>
     </div>

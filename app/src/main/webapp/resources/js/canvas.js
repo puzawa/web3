@@ -161,7 +161,7 @@ class CanvasDrawer {
         ctx.closePath();
     }
 
-    drawLastDot(points, lastPoint, R) {
+    drawDots(points, lastPoint, R) {
         if (R == null || lastPoint == null) return;
         for (const p of points) {
             const color = p.result === 'true' ? 'green' : 'red';
@@ -176,12 +176,12 @@ class CanvasDrawer {
         ctx.fillStyle = this.canvas_background_color;
         ctx.fillRect(0, 0, this.width, this.height);
 
-        this.drawCirclePart(this.cx, this.cy, this.rh / 2, Math.PI * 1.5, Math.PI * 2 , false);
+        this.drawCirclePart(this.cx, this.cy, this.rh / 2, Math.PI * 1.5, Math.PI * 2, false);
         this.drawRect(this.cx, this.cy, -this.rw, -this.rh / 2);
         this.drawTriangle(this.cx, this.cy, -this.rw / 2, this.rh);
         this.drawGrid();
         this.drawCoords(R);
         this.drawAxis();
-        this.drawLastDot(points, lastPoint, R);
+        this.drawDots(points, lastPoint, R);
     }
 }
