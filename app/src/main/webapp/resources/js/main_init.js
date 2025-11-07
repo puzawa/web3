@@ -80,12 +80,35 @@ function setTextInputNumericValidation(input) {
     });
 }
 
+function setCanvasOnClick(){
+    window.canvasDrawer.canvas.addEventListener("mousedown", async (event) => {
+        event.preventDefault()
+
+        let r = getActiveCheckboxValue();
+        if (r == null) {
+            alert("Введите R");
+            return
+        }
+        const plane =  window.canvasDrawer;
+
+        let canvasPos =  plane.canvas.getBoundingClientRect()
+        const clickX = event.clientX - canvasPos.left
+        const clickY = event.clientY - canvasPos.top
+
+        const x = ((clickX - plane.cx) / (plane.rw / r)).toFixed(4);
+        const y = ((plane.cy - clickY) / (plane.rh / r)).toFixed(4);
+
+        window.canvasDrawer.drawDot(x, y, r)
+    })
+}
+
 document.addEventListener("DOMContentLoaded", () => {
 
 
     let canvas = document.getElementById("coordinate-plane");
     window.canvasDrawer = new CanvasDrawer(canvas);
     window.canvasDrawer.redrawCanvas(getActiveCheckboxValue());
+    setCanvasOnClick();
 
     const input = document.getElementById('pointForm:textInput');
     if (input) setTextInputNumericValidation(input);
