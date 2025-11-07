@@ -123,7 +123,7 @@
 
         <h:commandButton id="saveButton" value="Save Point" action="#{point.submit}"
                          styleClass="hidden-button">
-            <f:ajax execute="@form" render="table" />
+            <f:ajax execute="@form" render="table"   onevent="handlePointAjax"/>
         </h:commandButton>
     </h:form>
 </h:body>

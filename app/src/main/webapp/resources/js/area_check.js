@@ -12,10 +12,6 @@ async function checkHit(mouseX, mouseY, R) {
             })
         });
 
-        if (!response.ok) {
-            throw new Error(`Server error: ${response.status}`);
-        }
-
         const result = await response.json();
         return result.hit;
     } catch (err) {

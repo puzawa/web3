@@ -6,12 +6,7 @@ function setSubmitButtonDisabled(isDisabled) {
 }
 
 function drawPoints() {
-    let last_point = {
-        x: getSpinnerValue(),
-        y: getTextInputValue(),
-        result: "true"
-    };
-    window.canvasDrawer.redrawCanvas(getActiveCheckboxValue(), getPointsFromTable(), last_point);
+    window.canvasDrawer.redrawCanvas(getActiveCheckboxValue(), getPointsFromTable());
 }
 
 function handlePoint() {
@@ -81,7 +76,7 @@ function setTextInputNumericValidation(input) {
     });
 }
 
-function setCanvasOnClick(){
+function setCanvasOnClick() {
     window.canvasDrawer.canvas.addEventListener("mousedown", async (event) => {
         event.preventDefault()
 
@@ -90,9 +85,9 @@ function setCanvasOnClick(){
             alert("Введите R");
             return
         }
-        const plane =  window.canvasDrawer;
+        const plane = window.canvasDrawer;
 
-        let canvasPos =  plane.canvas.getBoundingClientRect()
+        let canvasPos = plane.canvas.getBoundingClientRect()
         const clickX = event.clientX - canvasPos.left
         const clickY = event.clientY - canvasPos.top
 
@@ -101,7 +96,7 @@ function setCanvasOnClick(){
 
         setPoint(x, y, r);
         submitPoint();
-        window.canvasDrawer.drawDot(x, y, r)
+        //window.canvasDrawer.drawDot(x, y, r)
     })
 }
 
@@ -119,3 +114,8 @@ document.addEventListener("DOMContentLoaded", () => {
     handlePoint();
 });
 
+function handlePointAjax(data) {
+    if (data.status === "success") {
+        handlePoint();
+    }
+}

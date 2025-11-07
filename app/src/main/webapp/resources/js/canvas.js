@@ -161,12 +161,16 @@ class CanvasDrawer {
         ctx.closePath();
     }
 
-    drawDots(points, lastPoint, R) {
-        if (R == null || lastPoint == null) return;
+    async drawDots(points, R) {
+        if (!R || !points || points.length === 0) return;
+        const lastPoint = points[0];
+        if(!lastPoint)
+            return;
+
         for (const p of points) {
             const hitPromises = points.map(p => checkHit(p.x, p.y, R));
 
-            Promise.all(hitPromises).then(results => {
+            await Promise.all(hitPromises).then(results => {
                 for (let i = 0; i < points.length; i++) {
                     const p = points[i];
                     const hit = results[i];
@@ -178,7 +182,7 @@ class CanvasDrawer {
         this.drawDot(lastPoint.x, lastPoint.y, R, 'black', true);
     }
 
-    redrawCanvas(R, points = [], lastPoint = null) {
+    async redrawCanvas(R, points = []) {
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.width, this.height);
         ctx.fillStyle = this.canvas_background_color;
@@ -190,6 +194,6 @@ class CanvasDrawer {
         this.drawGrid();
         this.drawCoords(R);
         this.drawAxis();
-        this.drawDots(points, lastPoint, R);
+        await this.drawDots(points, R);
     }
 }
