@@ -16,11 +16,8 @@ public class PointBean implements Serializable {
     private BigDecimal y = new BigDecimal("1.0");
     private BigDecimal r = new BigDecimal("1.0");
 
-//    @Inject
-//    private ControllerBean controllerBean;
-//
-//    @Inject
-//    private CheckerBean checkerBean;
+    @Inject
+    private ControllerBean controllerBean;
 
     public PointBean() {
     }
@@ -57,20 +54,20 @@ public class PointBean implements Serializable {
             return;
         }
 
-        System.out.println("x: " + x + " y: " + y + " r: " + r);
+        boolean hit = MathFunctions.hitCheck(x,y,r);
 
-        System.out.println( "hit check " + MathFunctions.hitCheck(x,y,r));
-//        Point p = new Point();
-//
-//        p.setX(x);
-//        p.setY(y);
-//        p.setR(r);
-//
-//        p.setDate(localDateTime);
-//        p.setCheck(checkerBean.check(x, y, r));
-//
-//        p.setDuration(System.nanoTime() - start);
-//
-//        controllerBean.addPoint(p);
+        Point p = new Point();
+
+        p.setX(x);
+        p.setY(y);
+        p.setR(r);
+
+        p.setDate(localDateTime);
+        p.setCheck(hit);
+
+        p.setDuration(System.nanoTime() - start);
+
+        controllerBean.addPoint(p);
+
     }
 }

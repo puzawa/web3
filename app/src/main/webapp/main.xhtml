@@ -87,7 +87,7 @@
         </div>
 
         <div class="table-container">
-            <p:dataTable value="#{dbBean.points}" var="dot" styleClass="table" id="table">
+            <p:dataTable value="#{controllerBean.points}" var="dot" styleClass="table" id="table"  scrollable="true" scrollHeight="700">
                 <p:column headerText="X">
                     <h:outputText value="#{dot.x}"/>
                 </p:column>
@@ -101,15 +101,15 @@
                 </p:column>
 
                 <p:column headerText="Попадание">
-                    <h:outputText value="#{dot.hit}"/>
+                    <h:outputText value="#{dot.check}"/>
                 </p:column>
 
                 <p:column headerText="Текущее время">
-                    <h:outputText value="#{dot.currentTime}"/>
+                    <h:outputText value="#{dot.beautifulDate()}"/>
                 </p:column>
 
                 <p:column headerText="Время выполнения">
-                    <h:outputText value="#{dot.execTime} ms"/>
+                    <h:outputText value="#{dot.beautifulDuration()}"/>
                 </p:column>
             </p:dataTable>
         </div>
