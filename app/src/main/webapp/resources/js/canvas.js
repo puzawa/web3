@@ -164,8 +164,16 @@ class CanvasDrawer {
     drawDots(points, lastPoint, R) {
         if (R == null || lastPoint == null) return;
         for (const p of points) {
-            const color = p.result === 'true' ? 'green' : 'red';
-            this.drawDot(p.x, p.y, R, color);
+            const hitPromises = points.map(p => checkHit(p.x, p.y, R));
+
+            Promise.all(hitPromises).then(results => {
+                for (let i = 0; i < points.length; i++) {
+                    const p = points[i];
+                    const hit = results[i];
+                    const color = hit ? 'green' : 'red';
+                    this.drawDot(p.x, p.y, R, color);
+                }
+            });
         }
         this.drawDot(lastPoint.x, lastPoint.y, R, 'black', true);
     }

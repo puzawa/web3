@@ -5,17 +5,17 @@ function setSubmitButtonDisabled(isDisabled) {
     }
 }
 
-function previewPoint() {
+function drawPoints() {
     let last_point = {
         x: getSpinnerValue(),
         y: getTextInputValue(),
         result: "true"
     };
-    window.canvasDrawer.redrawCanvas(getActiveCheckboxValue(), [], last_point);
+    window.canvasDrawer.redrawCanvas(getActiveCheckboxValue(), getPointsFromTable(), last_point);
 }
 
 function handlePoint() {
-    window.canvasDrawer.redrawCanvas(getActiveCheckboxValue());
+    drawPoints();
 
     const y_str = getTextInputValue();
     const parts = y_str.split(".");
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let canvas = document.getElementById("coordinate-plane");
     window.canvasDrawer = new CanvasDrawer(canvas);
-    window.canvasDrawer.redrawCanvas(getActiveCheckboxValue());
+    drawPoints();
     setCanvasOnClick();
 
     const input = document.getElementById('pointForm:textInput');

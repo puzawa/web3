@@ -13,6 +13,7 @@
     <h:outputStylesheet library="css" name="styles.css"/>
     <h:outputStylesheet library="css" name="form.css"/>
 
+    <h:outputScript library="js" name="area_check.js" target="head"/>
     <h:outputScript library="js" name="hidden_set.js" target="head"/>
     <h:outputScript library="js" name="ui_getters.js" target="head"/>
     <h:outputScript library="js" name="canvas.js" target="head"/>
@@ -87,7 +88,7 @@
         </div>
 
         <div class="table-container">
-            <p:dataTable value="#{controllerBean.points}" var="dot" styleClass="table" id="table"  scrollable="true" scrollHeight="700">
+            <p:dataTable value="#{controllerBean.getPointsReversed()}" var="dot" styleClass="table" id="table"  scrollable="true" scrollHeight="700">
                 <p:column headerText="X">
                     <h:outputText value="#{dot.x}"/>
                 </p:column>
@@ -122,7 +123,7 @@
 
         <h:commandButton id="saveButton" value="Save Point" action="#{point.submit}"
                          styleClass="hidden-button">
-            <f:ajax execute="@form" render="@none" />
+            <f:ajax execute="@form" render="table" />
         </h:commandButton>
     </h:form>
 </h:body>

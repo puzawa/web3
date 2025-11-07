@@ -7,7 +7,7 @@ import jakarta.persistence.Persistence;
 import java.util.List;
 
 public class PointDAO {
-    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("myPU");
+    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("pointsPres");
 
     public void save(Point point) {
         EntityManager em = emf.createEntityManager();
