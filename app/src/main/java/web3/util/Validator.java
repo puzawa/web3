@@ -1,4 +1,4 @@
-package web3;
+package web3.util;
 import java.math.BigDecimal;
 
 public class Validator {

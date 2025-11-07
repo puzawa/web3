@@ -3,6 +3,7 @@ package web3;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import web3.util.MathFunctions;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -57,6 +58,8 @@ public class PointBean implements Serializable {
         }
 
         System.out.println("x: " + x + " y: " + y + " r: " + r);
+
+        System.out.println( "hit check " + MathFunctions.hitCheck(x,y,r));
 //        Point p = new Point();
 //
 //        p.setX(x);
