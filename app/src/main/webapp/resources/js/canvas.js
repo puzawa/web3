@@ -70,7 +70,7 @@ class CanvasDrawer {
     drawCoords(R) {
         const ctx = this.ctx;
         ctx.fillStyle = 'black';
-        ctx.font = '1.5em Montserrat';
+        ctx.font = '32px Montserrat';
         ctx.textBaseline = 'bottom';
 
         R = R == null ? 'R' : parseFloat(R).toString();

@@ -1,3 +1,10 @@
+function setSubmitButtonDisabled(isDisabled) {
+    const button = document.querySelector('.form-submit');
+    if (button) {
+        button.disabled = isDisabled;
+    }
+}
+
 function previewPoint() {
     let last_point = {
         x: getSpinnerValue(),
@@ -5,6 +12,33 @@ function previewPoint() {
         result: "true"
     };
     window.canvasDrawer.redrawCanvas(getActiveCheckboxValue(), [], last_point);
+}
+
+function handlePoint() {
+    window.canvasDrawer.redrawCanvas(getActiveCheckboxValue());
+
+    const y_str = getTextInputValue();
+    const parts = y_str.split(".");
+    const num = parseFloat(y_str);
+    let selectedXValue = getSpinnerValue();
+    let selectedRValue = getActiveCheckboxValue();
+    let selectedRNum = parseInt(selectedRValue);
+
+    if (selectedXValue === null ||
+        selectedRValue === null ||
+        ['-', ''].includes(y_str) ||
+        (!isNaN(num) && (num > 5 || num < -3)) ||
+        parts.length > 2 ||
+        ((num === 5 || num === -3) && (parts.length > 1 && !/^0*$/.test(parts[1])))
+    ) {
+        setSubmitButtonDisabled(true);
+    } else {
+        setSubmitButtonDisabled(false);
+
+        if (!(isFinite(selectedXValue) && isFinite(y_str) && isFinite(selectedRNum))) return;
+
+        window.canvasDrawer.drawDot(selectedXValue, y_str, selectedRValue);
+    }
 }
 
 function onClickCheckbox(clickedCheckbox) {
@@ -15,11 +49,11 @@ function onClickCheckbox(clickedCheckbox) {
         }
     });
 
-    previewPoint();
+    handlePoint();
 }
 
 function onClickSpinner(spinner) {
-    previewPoint();
+    handlePoint();
 }
 
 function onTextInput(input) {
@@ -31,7 +65,7 @@ function onTextInput(input) {
         input.value = input.dataset.lastValid;
     }
 
-    previewPoint();
+    handlePoint();
 }
 
 function setTextInputNumericValidation(input) {

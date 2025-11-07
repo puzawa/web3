@@ -11,6 +11,7 @@
 
     <h:outputStylesheet library="css" name="reset.css"/>
     <h:outputStylesheet library="css" name="styles.css"/>
+    <h:outputStylesheet library="css" name="form.css"/>
 
     <h:outputScript library="js" name="ui_getters.js" target="head"/>
     <h:outputScript library="js" name="canvas.js" target="head"/>
@@ -27,48 +28,89 @@
         </div>
     </header>
 
-    <div class="form">
-        <h:form id="pointForm">
-            <p:panelGrid columns="1" style="gap: 10px;">
+    <div class="main-content">
+        <div class="form-container">
+            <h:form id="pointForm">
+                <div class="form-body">
 
-                <p:spinner id="horizontalAfter" value="#{spinnerView.number}" buttons="horizontal-after"
-                           upButtonStyleClass="ui-button-success" downButtonStyleClass="ui-button-danger"
-                           min="-5" max="5" stepFactor="0.1" rotate="true" onkeydown="return false;"
-                           onchange="onClickSpinner(this)"
-                />
+                    <div class="form-group">
+                        <h:outputText value="X" styleClass="form-text"/>
+                        <p:spinner styleClass="form-input"
+                                   id="horizontalAfter" value="#{spinnerView.number}" buttons="horizontal-after"
+                                   upButtonStyleClass="ui-button-success" downButtonStyleClass="ui-button-danger"
+                                   min="-5" max="5" stepFactor="0.1" rotate="true" onkeydown="return false;"
+                                   onchange="onClickSpinner(this)"
+                        />
+                    </div>
 
-                <h:outputLabel for="textInput" value="Enter something: "/>
-                <h:inputText id="textInput" value="#{bean.inputValue}"/>
+                    <div class="form-group">
 
-                <h:panelGroup id="checkboxes">
-                    <ui:repeat var="option" value="#{checkboxView.options}">
-                        <h:selectBooleanCheckbox
-                                styleClass="r-select-checkbox"
-                                onclick="onClickCheckbox(this)">
-                            <f:passThroughAttribute name="data-label" value="#{option}"/>
-                        </h:selectBooleanCheckbox>
-                        #{option}<br/>
-                    </ui:repeat>
+                        <h:outputText value="Y" styleClass="form-text"/>
+                        <h:inputText styleClass="form-input"
+                                     id="textInput"
+                                     value="#{bean.inputValue}"
+                        />
+                    </div>
 
-                </h:panelGroup>
+                    <div class="form-group">
+
+                        <h:outputText value="R" styleClass="form-text"/>
+                        <h:panelGroup id="checkboxes">
+                            <ui:repeat var="option" value="#{checkboxView.options}">
+                                <h:selectBooleanCheckbox
+                                        styleClass="r-select-checkbox"
+                                        onclick="onClickCheckbox(this)">
+                                    <f:passThroughAttribute name="data-label" value="#{option}"/>
+                                </h:selectBooleanCheckbox>
+                                #{option}<br/>
+                            </ui:repeat>
+
+                        </h:panelGroup>
+                    </div>
+
+                    <p:commandButton styleClass="form-submit" value="Submit" type="button" onclick="submitForm()" disabled="true" />
+                </div>
+            </h:form>
+            <script>
+                function submitForm() {
+                }
+            </script>
+
+        </div>
 
 
+        <div class="image-container" style="text-align: center">
+            <canvas id="coordinate-plane">
+            </canvas>
+        </div>
 
-                <p:commandButton value="Submit" type="button" onclick="submitForm()"/>
+        <div class="table-container">
+            <p:dataTable value="#{dbBean.points}" var="dot" styleClass="table" id="table">
+                <p:column headerText="X">
+                    <h:outputText value="#{dot.x}"/>
+                </p:column>
 
-            </p:panelGrid>
-        </h:form>
+                <p:column headerText="Y">
+                    <h:outputText value="#{dot.y}"/>
+                </p:column>
 
-    </div>
-    <script>
-        function submitForm() {
+                <p:column headerText="R">
+                    <h:outputText value="#{dot.r}"/>
+                </p:column>
 
-        }
-    </script>
+                <p:column headerText="Попадание">
+                    <h:outputText value="#{dot.hit}"/>
+                </p:column>
 
-    <div class="image-container" style="text-align: center">
-        <canvas id="coordinate-plane">
-        </canvas>
+                <p:column headerText="Текущее время">
+                    <h:outputText value="#{dot.currentTime}"/>
+                </p:column>
+
+                <p:column headerText="Время выполнения">
+                    <h:outputText value="#{dot.execTime} ms"/>
+                </p:column>
+            </p:dataTable>
+        </div>
     </div>
 </h:body>
 </html>
