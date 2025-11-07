@@ -82,11 +82,14 @@ function setTextInputNumericValidation(input) {
 
 document.addEventListener("DOMContentLoaded", () => {
 
+
     let canvas = document.getElementById("coordinate-plane");
     window.canvasDrawer = new CanvasDrawer(canvas);
     window.canvasDrawer.redrawCanvas(getActiveCheckboxValue());
 
     const input = document.getElementById('pointForm:textInput');
     if (input) setTextInputNumericValidation(input);
+
+    handlePoint();
 });
 
