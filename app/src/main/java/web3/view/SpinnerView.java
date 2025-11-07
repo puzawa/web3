@@ -1,4 +1,4 @@
-package web3;
+package web3.view;
 
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;

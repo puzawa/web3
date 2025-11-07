@@ -13,6 +13,7 @@
     <h:outputStylesheet library="css" name="styles.css"/>
     <h:outputStylesheet library="css" name="form.css"/>
 
+    <h:outputScript library="js" name="hidden_set.js" target="head"/>
     <h:outputScript library="js" name="ui_getters.js" target="head"/>
     <h:outputScript library="js" name="canvas.js" target="head"/>
     <h:outputScript library="js" name="main_init.js" target="head"/>
@@ -73,6 +74,7 @@
             </h:form>
             <script>
                 function submitForm() {
+                    submitPoint();
                 }
             </script>
 
@@ -112,5 +114,16 @@
             </p:dataTable>
         </div>
     </div>
+
+    <h:form id="hiddenForm">
+        <h:inputHidden id="x" value="#{point.x}" />
+        <h:inputHidden id="y" value="#{point.y}" />
+        <h:inputHidden id="r" value="#{point.r}" />
+
+        <h:commandButton id="saveButton" value="Save Point" action="#{point.submit}"
+                         styleClass="hidden-button">
+            <f:ajax execute="@form" render="@none" />
+        </h:commandButton>
+    </h:form>
 </h:body>
 </html>

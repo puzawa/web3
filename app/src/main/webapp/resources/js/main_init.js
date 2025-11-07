@@ -37,6 +37,7 @@ function handlePoint() {
 
         if (!(isFinite(selectedXValue) && isFinite(y_str) && isFinite(selectedRNum))) return;
 
+        setPoint(selectedXValue, y_str, selectedRValue);
         window.canvasDrawer.drawDot(selectedXValue, y_str, selectedRValue);
     }
 }
@@ -98,6 +99,8 @@ function setCanvasOnClick(){
         const x = ((clickX - plane.cx) / (plane.rw / r)).toFixed(4);
         const y = ((plane.cy - clickY) / (plane.rh / r)).toFixed(4);
 
+        setPoint(x, y, r);
+        submitPoint();
         window.canvasDrawer.drawDot(x, y, r)
     })
 }

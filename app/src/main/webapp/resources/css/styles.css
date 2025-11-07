@@ -140,3 +140,8 @@ body {
     line-height: normal;
     margin: 0 auto;
 }
+
+.hidden-button {
+    display: none;   /* Completely invisible */
+    visibility: hidden; /* Optional, extra hiding */
+}
