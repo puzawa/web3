@@ -24,26 +24,4 @@ function getTextInputValue() {
     }
     return null;
 }
-function getPointsFromTable() {
-    const table = document.querySelector('.table');
-    if (!table) return [];
 
-    const points = [];
-    const rows = table.querySelectorAll('tbody tr');
-
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        if (cells.length >= 4) {
-            const x = parseFloat(cells[0].textContent.replace(',', '.'));
-            const y = parseFloat(cells[1].textContent.replace(',', '.'));
-            const r = parseFloat(cells[2].textContent.replace(',', '.'));
-            const isHitText = cells[3].textContent.trim().toLowerCase();
-            const result = (isHitText === 'true');
-
-            let point = { x, y, r, result };
-            points.push(point);
-        }
-    });
-
-    return points;
-}

@@ -5,12 +5,11 @@ function setSubmitButtonDisabled(isDisabled) {
     }
 }
 
-function drawPoints() {
-    window.canvasDrawer.redrawCanvas(getActiveCheckboxValue(), getPointsFromTable());
+async function drawPoints() {
+    await window.canvasDrawer.redrawCanvas(getActiveCheckboxValue());
 }
 
-function handlePoint() {
-    drawPoints();
+async function handlePoint() {
 
     const y_str = getTextInputValue();
     const parts = y_str.split(".");
@@ -28,6 +27,7 @@ function handlePoint() {
     ) {
         setSubmitButtonDisabled(true);
     } else {
+        await drawPoints();
         setSubmitButtonDisabled(false);
 
         if (!(isFinite(selectedXValue) && isFinite(y_str) && isFinite(selectedRNum))) return;
@@ -37,7 +37,7 @@ function handlePoint() {
     }
 }
 
-function onClickCheckbox(clickedCheckbox) {
+async function onClickCheckbox(clickedCheckbox) {
     let checkboxes = document.querySelectorAll('input.r-select-checkbox[type="checkbox"]');
     checkboxes.forEach(cb => {
         if (cb !== clickedCheckbox) {
@@ -45,14 +45,14 @@ function onClickCheckbox(clickedCheckbox) {
         }
     });
 
-    handlePoint();
+    await handlePoint();
 }
 
-function onClickSpinner(spinner) {
-    handlePoint();
+async function onClickSpinner(spinner) {
+    await handlePoint();
 }
 
-function onTextInput(input) {
+async function onTextInput(input) {
     if (!input.dataset.lastValid) input.dataset.lastValid = '';
     const regex = /^-?\d*\.?\d*$/;
     if (regex.test(input.value)) {
@@ -61,7 +61,7 @@ function onTextInput(input) {
         input.value = input.dataset.lastValid;
     }
 
-    handlePoint();
+    await handlePoint();
 }
 
 function setTextInputNumericValidation(input) {
@@ -96,26 +96,27 @@ function setCanvasOnClick() {
 
         setPoint(x, y, r);
         submitPoint();
+        await handlePoint();
         //window.canvasDrawer.drawDot(x, y, r)
     })
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
 
 
     let canvas = document.getElementById("coordinate-plane");
     window.canvasDrawer = new CanvasDrawer(canvas);
-    drawPoints();
+    await drawPoints();
     setCanvasOnClick();
 
     const input = document.getElementById('pointForm:textInput');
     if (input) setTextInputNumericValidation(input);
 
-    handlePoint();
+   await handlePoint();
 });
 
-function handlePointAjax(data) {
+async function handlePointAjax(data) {
     if (data.status === "success") {
-        handlePoint();
+        await handlePoint();
     }
 }

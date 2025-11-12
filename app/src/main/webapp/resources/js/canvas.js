@@ -18,6 +18,8 @@ class CanvasDrawer {
         this.canvas_color = 'rgba(181,162,241,0.67)';
         this.canvas_background_color = 'rgba(253,244,255,1.0)';
         this.grid_color = 'rgba(155,123,255,0.64)';
+
+        this.hitCache = new Map();
     }
 
     drawTick(x1, y1, x2, y2, label, lx, ly, align = 'center') {
@@ -161,28 +163,28 @@ class CanvasDrawer {
         ctx.closePath();
     }
 
-    async drawDots(points, R) {
-        if (!R || !points || points.length === 0) return;
+
+    async drawDots( R,forceRecheck = false) {
+        if (!R) return;
+
+        const points = await getPoints(R);
+        if(!points || points.length === 0)
+            return;
+
         const lastPoint = points[0];
-        if(!lastPoint)
+        if (!lastPoint)
             return;
 
         for (const p of points) {
-            const hitPromises = points.map(p => checkHit(p.x, p.y, R));
-
-            await Promise.all(hitPromises).then(results => {
-                for (let i = 0; i < points.length; i++) {
-                    const p = points[i];
-                    const hit = results[i];
-                    const color = hit ? 'green' : 'red';
-                    this.drawDot(p.x, p.y, R, color);
-                }
-            });
+            console.log(p.r + " " + R);
+            const color = p.hit ? (p.r == R ? 'green': 'limegreen') : 'red';
+            this.drawDot(p.x, p.y, R, color);
         }
         this.drawDot(lastPoint.x, lastPoint.y, R, 'black', true);
     }
 
-    async redrawCanvas(R, points = []) {
+    async redrawCanvas(R) {
+        console.log("R: " + R);
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.width, this.height);
         ctx.fillStyle = this.canvas_background_color;
@@ -194,6 +196,6 @@ class CanvasDrawer {
         this.drawGrid();
         this.drawCoords(R);
         this.drawAxis();
-        await this.drawDots(points, R);
+        await this.drawDots(R);
     }
 }

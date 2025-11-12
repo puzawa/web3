@@ -1,21 +1,21 @@
-async function checkHit(mouseX, mouseY, R) {
+async function getPoints(R) {
     try {
-        const response = await fetch('/web3/checkArea', {
-            method: 'POST',
+        const response = await fetch(`/web3/getPoints?r=${encodeURIComponent(R)}`, {
+            method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                x: mouseX,
-                y: mouseY,
-                r: R
-            })
+                'Accept': 'application/json'
+            }
         });
 
+        if (!response.ok) {
+            throw new Error(`Server responded with ${response.status}`);
+        }
+
         const result = await response.json();
-        return result.hit;
+
+        return result.points || [];
     } catch (err) {
-        console.error('Error calling hitCheck:', err);
-        return false;
+        console.error('Error calling getPoints:', err);
+        return [];
     }
 }
