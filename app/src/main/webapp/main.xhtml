@@ -13,7 +13,7 @@
     <h:outputStylesheet library="css" name="styles.css"/>
     <h:outputStylesheet library="css" name="form.css"/>
 
-    <h:outputScript library="js" name="area_check.js" target="head"/>
+    <h:outputScript library="js" name="app_state.js" target="head"/>
     <h:outputScript library="js" name="hidden_set.js" target="head"/>
     <h:outputScript library="js" name="ui_getters.js" target="head"/>
     <h:outputScript library="js" name="canvas.js" target="head"/>
@@ -55,18 +55,16 @@
                     </div>
 
                     <div class="form-group">
-
                         <h:outputText value="R" styleClass="form-text"/>
                         <h:panelGroup id="checkboxes">
                             <ui:repeat var="option" value="#{checkboxView.options}">
                                 <h:selectBooleanCheckbox
-                                        styleClass="r-select-checkbox"
-                                        onclick="onClickCheckbox(this)">
-                                    <f:passThroughAttribute name="data-label" value="#{option}"/>
+                                        value="#{checkboxView.selectedOptions[option]}"
+                                        styleClass="r-select-checkbox">
+                                    <f:ajax event="change" render="@this" onevent="handlePointAjax"/>
                                 </h:selectBooleanCheckbox>
                                 #{option}<br/>
                             </ui:repeat>
-
                         </h:panelGroup>
                     </div>
 
@@ -89,7 +87,8 @@
         </div>
 
         <div class="table-container">
-            <p:dataTable value="#{controllerBean.getPointsReversed()}" var="dot" styleClass="table" id="table"  scrollable="true" scrollHeight="700">
+            <p:dataTable value="#{controllerBean.getPointsReversed()}" var="dot" styleClass="table" id="table"
+                         scrollable="true" scrollHeight="700">
                 <p:column headerText="X">
                     <h:outputText value="#{dot.x}"/>
                 </p:column>
@@ -118,13 +117,13 @@
     </div>
 
     <h:form id="hiddenForm">
-        <h:inputHidden id="x" value="#{point.x}" />
-        <h:inputHidden id="y" value="#{point.y}" />
-        <h:inputHidden id="r" value="#{point.r}" />
+        <h:inputHidden id="x" value="#{point.x}"/>
+        <h:inputHidden id="y" value="#{point.y}"/>
+        <h:inputHidden id="r" value="#{point.r}"/>
 
         <h:commandButton id="saveButton" value="Save Point" action="#{point.submit}"
                          styleClass="hidden-button">
-            <f:ajax execute="@form" render="table"   onevent="handlePointAjax"/>
+            <f:ajax execute="@form" render="table" onevent="handlePointAjax"/>
         </h:commandButton>
     </h:form>
 </h:body>

@@ -164,11 +164,8 @@ class CanvasDrawer {
     }
 
 
-    async drawDots( R,forceRecheck = false) {
-        if (!R) return;
-
-        const points = await getPoints(R);
-        if(!points || points.length === 0)
+    drawDots(R, points = []) {
+        if (!points || points.length === 0 || R === 0)
             return;
 
         const lastPoint = points[0];
@@ -176,19 +173,20 @@ class CanvasDrawer {
             return;
 
         for (const p of points) {
-            console.log(p.r + " " + R);
-            const color = p.hit ? (p.r == R ? 'green': 'limegreen') : 'red';
+            const color = p.hit ? (p.r == R ? 'green' : 'limegreen') : 'red';
             this.drawDot(p.x, p.y, R, color);
         }
-        this.drawDot(lastPoint.x, lastPoint.y, R, 'black', true);
+        //this.drawDot(lastPoint.x, lastPoint.y, R, 'black', true);
     }
 
-    async redrawCanvas(R) {
-        console.log("R: " + R);
+    redrawCanvas() {
         const ctx = this.ctx;
         ctx.clearRect(0, 0, this.width, this.height);
         ctx.fillStyle = this.canvas_background_color;
         ctx.fillRect(0, 0, this.width, this.height);
+
+        const points = appState.points;
+        const R = appState.R;
 
         this.drawCirclePart(this.cx, this.cy, this.rh / 2, Math.PI * 1.5, Math.PI * 2, false);
         this.drawRect(this.cx, this.cy, -this.rw, -this.rh / 2);
@@ -196,6 +194,6 @@ class CanvasDrawer {
         this.drawGrid();
         this.drawCoords(R);
         this.drawAxis();
-        await this.drawDots(R);
+        this.drawDots(R, points);
     }
 }

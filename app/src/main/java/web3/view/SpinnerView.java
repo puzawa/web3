@@ -1,11 +1,12 @@
 package web3.view;
 
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 import java.io.Serializable;
 
 @Named("spinnerView")
-@ViewScoped
+@SessionScoped
 public class SpinnerView implements Serializable {
     private int number = 0;
 

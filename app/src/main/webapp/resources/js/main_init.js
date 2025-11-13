@@ -5,17 +5,18 @@ function setSubmitButtonDisabled(isDisabled) {
     }
 }
 
-async function drawPoints() {
-    await window.canvasDrawer.redrawCanvas(getActiveCheckboxValue());
+ function drawPoints() {
+     window.canvasDrawer.redrawCanvas();
 }
 
 async function handlePoint() {
-
+    await appState.update();
+    drawPoints();
     const y_str = getTextInputValue();
     const parts = y_str.split(".");
     const num = parseFloat(y_str);
     let selectedXValue = getSpinnerValue();
-    let selectedRValue = getActiveCheckboxValue();
+    let selectedRValue = appState.R;
     let selectedRNum = parseInt(selectedRValue);
 
     if (selectedXValue === null ||
@@ -27,7 +28,6 @@ async function handlePoint() {
     ) {
         setSubmitButtonDisabled(true);
     } else {
-        await drawPoints();
         setSubmitButtonDisabled(false);
 
         if (!(isFinite(selectedXValue) && isFinite(y_str) && isFinite(selectedRNum))) return;
@@ -37,16 +37,6 @@ async function handlePoint() {
     }
 }
 
-async function onClickCheckbox(clickedCheckbox) {
-    let checkboxes = document.querySelectorAll('input.r-select-checkbox[type="checkbox"]');
-    checkboxes.forEach(cb => {
-        if (cb !== clickedCheckbox) {
-            cb.checked = false;
-        }
-    });
-
-    await handlePoint();
-}
 
 async function onClickSpinner(spinner) {
     await handlePoint();
@@ -103,9 +93,12 @@ function setCanvasOnClick() {
 
 document.addEventListener("DOMContentLoaded", async () => {
 
+    window.appState = new AppState();
+    await window.appState.init();
 
     let canvas = document.getElementById("coordinate-plane");
     window.canvasDrawer = new CanvasDrawer(canvas);
+
     await drawPoints();
     setCanvasOnClick();
 

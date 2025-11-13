@@ -7,8 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
 import web3.util.MathFunctions;
+import web3.view.CheckboxView;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,33 +20,38 @@ public class GetPointsServerlet extends HttpServlet {
     @Inject
     private ControllerBean controllerBean;
 
+    @Inject
+    private CheckboxView checkboxView;
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        BigDecimal r = null;
-        try {
-            r = new BigDecimal(request.getParameter("r"));
-        }catch (NumberFormatException e){
+        List<BigDecimal> enabledR = checkboxView.getEnabledR();
+        if(enabledR.isEmpty())
             return;
-        }
+
+        BigDecimal maxR =enabledR.get(0);
 
         ArrayList<PointDTO> pointDTOS = new ArrayList<>();
         for(Point p : controllerBean.getPoints()){
+
             BigDecimal x = p.getX();
             BigDecimal y = p.getY();
             BigDecimal realR = p.getR();
+            if(!enabledR.contains(realR.stripTrailingZeros()))
+                continue;
 
-            boolean isHit = MathFunctions.hitCheck(x, y, r);
+            boolean isHit = MathFunctions.hitCheck(x, y, maxR);
             pointDTOS.add(new PointDTO(x,y, realR, isHit));
 
         }
         Gson gson = new Gson();
 
-        PointsDTO pointsDTO = new PointsDTO(pointDTOS);
+        GraphResponse graphResponse = new GraphResponse(pointDTOS,maxR);
 
-        String jsonResponse = gson.toJson(pointsDTO);
+        String jsonResponse = gson.toJson(graphResponse);
         response.getWriter().write(jsonResponse);
     }
 }

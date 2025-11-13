@@ -1,12 +1,13 @@
 package web3.view;
 
+import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
 
 import java.io.Serializable;
 
 @Named("textInputView")
-@ViewScoped
+@SessionScoped
 public class TextInputView implements Serializable {
     private String input = "0.0";
 
