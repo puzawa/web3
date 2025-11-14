@@ -1,5 +1,6 @@
 package web3.point;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+@ApplicationScoped
 public class PointDAO {
     private static volatile EntityManagerFactory emf;
 

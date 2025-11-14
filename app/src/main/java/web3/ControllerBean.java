@@ -1,5 +1,6 @@
 package web3;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -27,11 +28,14 @@ public class ControllerBean implements Serializable {
     @Inject
     private Provider<TextInputView> textInputView;
 
-    private final PointDAO pointDAO = new PointDAO();
+    @Inject
+    private PointDAO pointDAO;
+
     private List<Point> points = new ArrayList<>();
     private boolean dbMerged = false;
 
-    public ControllerBean() {
+    @PostConstruct
+    public void init() {
         if (pointDAO.isDBAvailable()) {
             mergePointsWithDB();
             dbMerged = true;
