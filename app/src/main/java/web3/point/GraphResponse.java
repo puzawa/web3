@@ -1,6 +1,4 @@
-package web3;
-
-import web3.point.PointDTO;
+package web3.point;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -10,7 +8,7 @@ public class GraphResponse implements Serializable {
     final private ArrayList<PointDTO> points;
     final private BigDecimal maxR;
     final  private ArrayList<BigDecimal>enabledRs;
-    GraphResponse(ArrayList<PointDTO> points, BigDecimal maxR, ArrayList<BigDecimal>enabledRs) {
+    public GraphResponse(ArrayList<PointDTO> points, BigDecimal maxR, ArrayList<BigDecimal> enabledRs) {
         this.points = points;
         this.maxR = maxR;
         this.enabledRs = enabledRs;

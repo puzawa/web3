@@ -1,12 +1,14 @@
 package web3;
 
 import jakarta.inject.Inject;
+import jakarta.inject.Provider;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
+import web3.point.GraphResponse;
 import web3.point.Point;
 import web3.point.PointDTO;
 import web3.util.MathFunctions;
@@ -24,7 +26,7 @@ public class GetPointsServerlet extends HttpServlet {
     private ControllerBean controllerBean;
 
     @Inject
-    private CheckboxView checkboxView;
+    private Provider<CheckboxView> checkboxView;
 
     private void writeJsonResponse(HttpServletResponse response,
                                    ArrayList<PointDTO> pointDTOS,
@@ -47,7 +49,7 @@ public class GetPointsServerlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        ArrayList<BigDecimal> enabledR = checkboxView.getEnabledR();
+        ArrayList<BigDecimal> enabledR = checkboxView.get().getEnabledR();
         if (enabledR.isEmpty()) {
             writeJsonResponse(response, new ArrayList<>(), BigDecimal.ZERO, new ArrayList<>());
             return;

@@ -119,10 +119,13 @@
         <h:inputHidden id="y" value="#{point.y}"/>
         <h:inputHidden id="r" value="#{point.r}"/>
 
-        <h:commandButton id="saveButton" value="Save Point" action="#{point.submit}"
-                         styleClass="hidden-button">
-            <f:ajax execute="@form" render="table" onevent="handlePointAjax"/>
-        </h:commandButton>
+        <p:commandButton id="saveButton" value="Save Point" action="#{point.submit(false)}" styleClass="hidden-button"
+                         update=":table :pointForm"
+                         oncomplete="handlePointOnComplete(); reapplyValidation();"/>
+
+        <p:commandButton id="saveButtonHidden" value="Save Point Hidden" action="#{point.submit(true)}" styleClass="hidden-button"
+                         update=":table"
+                         oncomplete="handlePointOnComplete();"/>
     </h:form>
 </h:body>
 </html>

@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Named("textInputView")
 @SessionScoped
 public class TextInputView implements Serializable {
-    private String input = "0.0";
+    private String input = "";
 
     public String getInput() {
         return input;

@@ -19,3 +19,6 @@ function setPoint(x, y, r) {
 function submitPoint() {
     document.getElementById('hiddenForm:saveButton').click();
 }
+function submitPointHidden() {
+    document.getElementById('hiddenForm:saveButtonHidden').click();
+}

@@ -85,11 +85,15 @@ function setCanvasOnClick() {
         const y = ((plane.cy - clickY) / (plane.rh / r)).toFixed(4);
 
         setPoint(x, y, r);
-        submitPoint();
+        submitPointHidden();
         await handlePoint();
     })
 }
 
+function reapplyValidation() {
+    const input = document.getElementById('pointForm:textInput');
+    if (input) setTextInputNumericValidation(input);
+}
 document.addEventListener("DOMContentLoaded", async () => {
 
     window.appState = new AppState();
@@ -101,8 +105,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     await drawPoints();
     setCanvasOnClick();
 
-    const input = document.getElementById('pointForm:textInput');
-    if (input) setTextInputNumericValidation(input);
+    reapplyValidation();
 
    await handlePoint();
 });
