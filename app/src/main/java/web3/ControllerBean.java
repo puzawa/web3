@@ -6,11 +6,13 @@ import jakarta.inject.Named;
 import jakarta.inject.Provider;
 import web3.point.Point;
 import web3.point.PointDAO;
+import web3.util.MathFunctions;
 import web3.view.CheckboxView;
 import web3.view.SpinnerView;
 import web3.view.TextInputView;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,7 +44,6 @@ public class ControllerBean implements Serializable {
     public ControllerBean() {
     }
 
-
     public void setPoints(List<Point> points) {
         this.points = points;
     }
@@ -58,6 +59,23 @@ public class ControllerBean implements Serializable {
         textInputView.get().setInput("");
     }
     public void addPoint(Point point) {
+        long start = System.nanoTime();
+
+        boolean hit = MathFunctions.hitCheck(point.getX(), point.getY(), point.getR());
+        point.setCheck(hit);
+        ArrayList<BigDecimal> rs = checkboxView.get().getEnabledR();
+       // rs.sort(Collections.reverseOrder());
+
+        for(BigDecimal r : rs) {
+            boolean little_hit = MathFunctions.hitCheck(point.getX(), point.getY(), r);
+            if(little_hit){
+                point.setR(r.stripTrailingZeros());
+                point.setCheck(true);
+            }
+        }
+
+        point.setDuration(System.nanoTime() - start);
+
         pointDAO.save(point);
         points.add(point);
     }

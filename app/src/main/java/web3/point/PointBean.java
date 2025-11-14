@@ -48,25 +48,17 @@ public class PointBean implements Serializable {
     }
 
     public void submit(Boolean hidden) {
-        long start = System.nanoTime();
         LocalDateTime localDateTime = LocalDateTime.now();
 
         if (x == null || y == null || r == null) {
             return;
         }
-
-        boolean hit = MathFunctions.hitCheck(x, y, r);
-
         Point p = new Point();
 
         p.setX(x);
         p.setY(y);
         p.setR(r);
-
         p.setDate(localDateTime);
-        p.setCheck(hit);
-
-        p.setDuration(System.nanoTime() - start);
 
         if (hidden)
             controllerBean.addPoint(p);
