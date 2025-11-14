@@ -13,9 +13,8 @@ import web3.view.TextInputView;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Named("controllerBean")
 @ApplicationScoped
@@ -29,8 +28,52 @@ public class ControllerBean implements Serializable {
     private Provider<TextInputView> textInputView;
 
     private final PointDAO pointDAO = new PointDAO();
-    private List<Point> points = pointDAO.loadAll();
+    private List<Point> points = new ArrayList<>();
+    private boolean dbMerged = false;
 
+    public ControllerBean() {
+        if (pointDAO.isDBAvailable()) {
+            mergePointsWithDB();
+            dbMerged = true;
+        }
+    }
+
+    public void mergePointsWithDB() {
+        if (!pointDAO.isDBAvailable()) {
+            System.err.println("DB not available. Cannot merge points.");
+            return;
+        }
+
+        if (dbMerged) {
+            return;
+        }
+
+        List<Point> dbPoints = pointDAO.loadAll();
+        System.out.println("DB has " + dbPoints.size() + " points.");
+
+        Set<Long> dbIds = dbPoints.stream()
+                .map(Point::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        for (Point dbPoint : dbPoints) {
+            boolean exists = points.stream()
+                    .anyMatch(p -> p.getId() != null && p.getId().equals(dbPoint.getId()));
+            if (!exists) {
+                points.add(dbPoint);
+            }
+        }
+
+        for (Point point : points) {
+            if (point.getId() == null || !dbIds.contains(point.getId())) {
+                pointDAO.save(point);
+                dbIds.add(point.getId());
+            }
+        }
+
+        dbMerged = true;
+        System.out.println("Merged points with DB. Total in-memory: " + points.size());
+    }
 
     public List<Point> getPointsReversed() {
         List<Point> reversed = new ArrayList<>(points);
@@ -38,19 +81,23 @@ public class ControllerBean implements Serializable {
         return reversed;
     }
 
+    void checkDbMerge(){
+        if (pointDAO.isDBAvailable()) {
+            if (!dbMerged)
+                mergePointsWithDB();
+        }
+        else dbMerged = false;
+    }
     public List<Point> getPoints() {
+        checkDbMerge();
         return points;
     }
 
-    public ControllerBean() {
-    }
-
-    public void setPoints(List<Point> points) {
-        this.points = points;
-    }
-
     public void clear() {
-        pointDAO.deleteAll();
+        checkDbMerge();
+        if (pointDAO.isDBAvailable()) {
+            pointDAO.deleteAll();
+        }
         points.clear();
     }
 
@@ -61,6 +108,7 @@ public class ControllerBean implements Serializable {
     }
 
     public void addPoint(Point point) {
+        checkDbMerge();
         long start = System.nanoTime();
 
         boolean hit = MathFunctions.hitCheck(point.getX(), point.getY(), point.getR());
@@ -77,7 +125,10 @@ public class ControllerBean implements Serializable {
 
         point.setDuration(System.nanoTime() - start);
 
-        pointDAO.save(point);
+        if (pointDAO.isDBAvailable()) {
+            pointDAO.save(point);
+        }
+
         points.add(point);
     }
 }
