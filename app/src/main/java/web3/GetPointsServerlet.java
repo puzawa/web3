@@ -13,6 +13,7 @@ import web3.view.CheckboxView;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @WebServlet("/getPoints")
@@ -66,6 +67,8 @@ public class GetPointsServerlet extends HttpServlet {
             pointDTOS.add(new PointDTO(x, y, realR, isHit));
 
         }
+
+        Collections.reverse(pointDTOS);
         writeJsonResponse(response, pointDTOS, maxR, enabledR);
     }
 }

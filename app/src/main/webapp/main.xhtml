@@ -114,8 +114,9 @@
             </p:dataTable>
 
             <h:form>
-                <h:commandButton value="Clear"
-                                 action="#{controllerBean.clear}"/>
+                <p:commandButton value="Clear" action="#{controllerBean.clear}">
+                    <f:ajax execute="@form" render="table" onevent="handlePointAjax"/>
+                </p:commandButton>
             </h:form>
         </div>
     </div>
