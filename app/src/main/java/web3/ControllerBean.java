@@ -136,3 +136,4 @@ public class ControllerBean implements Serializable {
         points.add(point);
     }
 }
+//        this.checkboxView = CDI.current().select(CheckboxView.class).get();

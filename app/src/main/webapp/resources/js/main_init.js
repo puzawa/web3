@@ -24,7 +24,7 @@ async function handlePoint() {
         ['-', ''].includes(y_str) ||
         (!isNaN(num) && (num > 5 || num < -3)) ||
         parts.length > 2 ||
-        ((num === 5 || num === -3) && (parts.length > 1 && !/^0*$/.test(parts[1])))
+        (( (num === 5 && parts[0] === '5' )|| (num === -3 && parts[0] === '-3')) && (parts.length > 1 && !/^0*$/.test(parts[1])))
     ) {
         setSubmitButtonDisabled(true);
     } else {
