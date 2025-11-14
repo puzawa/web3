@@ -5,6 +5,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import web3.ControllerBean;
 import web3.util.MathFunctions;
+import web3.util.Validator;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -53,6 +54,11 @@ public class PointBean implements Serializable {
         if (x == null || y == null || r == null) {
             return;
         }
+
+        if(!Validator.checkX(x) || !Validator.checkY(y) || !Validator.checkR(r)) {
+            return;
+        }
+
         Point p = new Point();
 
         p.setX(x);
