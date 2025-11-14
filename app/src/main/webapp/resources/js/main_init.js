@@ -96,6 +96,9 @@ function reapplyValidation() {
 }
 document.addEventListener("DOMContentLoaded", async () => {
 
+    setInterval(checkServer, 5000);
+    checkServer();
+
     window.appState = new AppState();
     await window.appState.init();
 

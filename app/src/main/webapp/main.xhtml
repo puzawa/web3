@@ -13,6 +13,7 @@
     <h:outputStylesheet library="css" name="styles.css"/>
     <h:outputStylesheet library="css" name="form.css"/>
 
+    <h:outputScript library="js" name="ping.js" target="head"/>
     <h:outputScript library="js" name="app_state.js" target="head"/>
     <h:outputScript library="js" name="hidden_set.js" target="head"/>
     <h:outputScript library="js" name="ui_getters.js" target="head"/>
@@ -123,9 +124,44 @@
                          update=":table :pointForm"
                          oncomplete="handlePointOnComplete(); reapplyValidation();"/>
 
-        <p:commandButton id="saveButtonHidden" value="Save Point Hidden" action="#{point.submit(true)}" styleClass="hidden-button"
+        <p:commandButton id="saveButtonHidden" value="Save Point Hidden" action="#{point.submit(true)}"
+                         styleClass="hidden-button"
                          update=":table"
                          oncomplete="handlePointOnComplete();"/>
     </h:form>
+
+    <p:dialog id="serverDownDialog"
+              widgetVar="serverDownDialog"
+              modal="true"
+              closable="false"
+              draggable="false"
+              resizable="false"
+              visible="false"
+              showHeader="false"
+              style="text-align:center;">
+
+        <h:panelGroup style="padding:20px; display:block;">
+            <h:outputText value="Сервер недоступен. Ждём восстановление..."
+                          style="font-size:20px; display:block; margin-bottom:10px;"/>
+            <i class="pi pi-spin pi-spinner" style="font-size:2rem; margin-top:10px;"></i>
+        </h:panelGroup>
+
+    </p:dialog>
+
+    <p:dialog id="serverBackDialog"
+              widgetVar="serverBackDialog"
+              modal="true"
+              closable="false"
+              draggable="false"
+              resizable="false"
+              visible="false">
+        <h:panelGroup>
+            <h:outputText value="Сервер снова доступен. Перезагрузить страницу?"/>
+            <br/><br/>
+            <p:commandButton value="Перезагрузить"
+                             onclick="location.reload()"
+                             styleClass="ui-button-success"/>
+        </h:panelGroup>
+    </p:dialog>
 </h:body>
 </html>

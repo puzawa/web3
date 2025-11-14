@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 @WebServlet("/getPoints")
-public class GetPointsServerlet extends HttpServlet {
+public class GetPointsServlet extends HttpServlet {
 
     @Inject
     private ControllerBean controllerBean;
