@@ -71,7 +71,7 @@ function setCanvasOnClick() {
         event.preventDefault()
 
         let r = appState.maxR;
-        if (r == null) {
+        if ((r == null) || (r === 0)) {
             alert("Введите R");
             return
         }
@@ -117,3 +117,7 @@ async function handlePointAjax(data) {
     }
 }
 
+async function submitForm() {
+    submitPoint();
+    await handlePoint();
+}
