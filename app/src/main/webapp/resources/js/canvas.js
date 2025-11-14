@@ -196,11 +196,11 @@ class CanvasDrawer {
 
 
         const erColorMap = {
-            1: "rgba(180, 130, 255, 0.8)",
-            2: "rgba(140, 0, 200, 0.8)",
-            3: "rgba(200, 60, 255, 0.8)",
-            4: "rgba(150, 80, 120, 0.8)",
-            5: "rgba(255, 120, 255, 0.8)"
+            1: "rgba(180, 130, 255, 1.0)",
+            2: "rgba(140, 0, 200, 1.0)",
+            3: "rgba(200, 60, 255, 1.0)",
+            4: "rgba(150, 80, 120, 1.0)",
+            5: "rgba(255, 120, 255, 1.0)"
         };
         const color_main = erColorMap[maxR] ?? this.canvas_color;
 

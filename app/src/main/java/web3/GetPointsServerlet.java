@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
+import web3.point.Point;
+import web3.point.PointDTO;
 import web3.util.MathFunctions;
 import web3.view.CheckboxView;
 
@@ -14,7 +16,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 @WebServlet("/getPoints")
 public class GetPointsServerlet extends HttpServlet {

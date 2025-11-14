@@ -1,8 +1,9 @@
-package web3;
+package web3.point;
 
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import web3.ControllerBean;
 import web3.util.MathFunctions;
 
 import java.io.Serializable;

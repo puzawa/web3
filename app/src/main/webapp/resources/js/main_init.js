@@ -107,8 +107,13 @@ document.addEventListener("DOMContentLoaded", async () => {
    await handlePoint();
 });
 
+async function handlePointOnComplete() {
+    await handlePoint();
+
+}
 async function handlePointAjax(data) {
     if (data.status === "success") {
-        await handlePoint();
+        await handlePointOnComplete();
     }
 }
+

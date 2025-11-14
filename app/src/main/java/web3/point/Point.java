@@ -1,4 +1,4 @@
-package web3;
+package web3.point;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;

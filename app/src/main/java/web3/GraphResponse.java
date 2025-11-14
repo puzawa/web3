@@ -1,5 +1,7 @@
 package web3;
 
+import web3.point.PointDTO;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;

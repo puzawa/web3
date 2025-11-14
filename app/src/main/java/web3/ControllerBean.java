@@ -1,10 +1,9 @@
 package web3;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
+import web3.point.Point;
+import web3.point.PointDAO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -34,11 +33,6 @@ public class ControllerBean implements Serializable {
     }
 
     public void clear() {
-        System.out.println("clear() called. Stack trace:");
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        for (StackTraceElement element : stackTrace) {
-            System.out.println("\tat " + element);
-        }
         points.clear();
         pointDAO.deleteAll();
     }

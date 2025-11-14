@@ -1,4 +1,4 @@
-package web3;
+package web3.point;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -6,7 +6,6 @@ import jakarta.persistence.Persistence;
 import jakarta.persistence.PersistenceException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
