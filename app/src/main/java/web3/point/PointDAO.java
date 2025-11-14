@@ -29,6 +29,18 @@ public class PointDAO {
         return emf;
     }
 
+    public boolean isDBAvailable() {
+        EntityManagerFactory factory = getEMF();
+        if (factory == null) {
+            return false;
+        }
+        try (EntityManager em = factory.createEntityManager()) {
+            return true;
+        } catch (PersistenceException ex) {
+            return false;
+        }
+    }
+
     private EntityManager getEntityManager() {
         EntityManagerFactory factory = getEMF();
         if (factory == null) {
@@ -82,29 +94,13 @@ public class PointDAO {
         executeInTransaction(em -> em.persist(point), "saving Point");
     }
 
-    public List<Point> findAll() {
+    public List<Point> loadAll() {
         return executeRead(
                 em -> em.createQuery("SELECT u FROM Point u", Point.class).getResultList(),
                 new ArrayList<>(),
                 "fetching all Points"
         );
     }
-
-    public Point findById(Long id) {
-        return executeRead(
-                em -> em.find(Point.class, id),
-                null,
-                "fetching Point by id"
-        );
-    }
-
-    public void delete(Point point) {
-        executeInTransaction(
-                em -> em.remove(em.contains(point) ? point : em.merge(point)),
-                "deleting Point"
-        );
-    }
-
     public void deleteAll() {
         executeInTransaction(
                 em -> em.createQuery("DELETE FROM Point").executeUpdate(),

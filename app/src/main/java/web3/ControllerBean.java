@@ -29,7 +29,7 @@ public class ControllerBean implements Serializable {
     private Provider<TextInputView> textInputView;
 
     private final PointDAO pointDAO = new PointDAO();
-    private List<Point> points = pointDAO.findAll();
+    private List<Point> points = pointDAO.loadAll();
 
 
     public List<Point> getPointsReversed() {
@@ -37,6 +37,7 @@ public class ControllerBean implements Serializable {
         Collections.reverse(reversed);
         return reversed;
     }
+
     public List<Point> getPoints() {
         return points;
     }
@@ -58,6 +59,7 @@ public class ControllerBean implements Serializable {
         spinnerView.get().setNumber(0);
         textInputView.get().setInput("");
     }
+
     public void addPoint(Point point) {
         long start = System.nanoTime();
 
@@ -65,9 +67,9 @@ public class ControllerBean implements Serializable {
         point.setCheck(hit);
         ArrayList<BigDecimal> rs = checkboxView.get().getEnabledR();
 
-        for(BigDecimal r : rs) {
+        for (BigDecimal r : rs) {
             boolean little_hit = MathFunctions.hitCheck(point.getX(), point.getY(), r);
-            if(little_hit){
+            if (little_hit) {
                 point.setR(r.stripTrailingZeros());
                 point.setCheck(true);
             }

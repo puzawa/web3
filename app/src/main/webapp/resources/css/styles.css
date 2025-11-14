@@ -52,6 +52,7 @@ body {
     align-items: flex-start;
     justify-content: space-between;
 }
+
 .graph__axis, .graph__arrow, .graph__serif {
     stroke: #6A4CFF;
     stroke-width: 2px;
@@ -147,5 +148,6 @@ body {
 }
 
 .table-container {
-    flex: 1;
+    flex: 0 0 700px;
+
 }
