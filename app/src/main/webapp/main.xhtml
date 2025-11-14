@@ -46,7 +46,6 @@
                     </div>
 
                     <div class="form-group">
-
                         <h:outputText value="Y" styleClass="form-text"/>
                         <h:inputText styleClass="form-input"
                                      id="textInput"
@@ -113,6 +112,11 @@
                     <h:outputText value="#{dot.beautifulDuration()}"/>
                 </p:column>
             </p:dataTable>
+
+            <h:form>
+                <h:commandButton value="Clear"
+                                 action="#{controllerBean.clear}"/>
+            </h:form>
         </div>
     </div>
 

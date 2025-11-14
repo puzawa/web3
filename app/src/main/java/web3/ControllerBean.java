@@ -34,6 +34,11 @@ public class ControllerBean implements Serializable {
     }
 
     public void clear() {
+        System.out.println("clear() called. Stack trace:");
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        for (StackTraceElement element : stackTrace) {
+            System.out.println("\tat " + element);
+        }
         points.clear();
         pointDAO.deleteAll();
     }
@@ -41,15 +46,5 @@ public class ControllerBean implements Serializable {
     public void addPoint(Point point) {
         points.add(point);
         pointDAO.save(point);
-    }
-
-    public String getPointsAsJson() throws JsonProcessingException {
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JavaTimeModule());
-            return mapper.writeValueAsString(points);
-        } catch (Exception e) {
-            return "[]";
-        }
     }
 }

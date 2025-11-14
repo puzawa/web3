@@ -1,4 +1,5 @@
 package web3;
+
 import jakarta.inject.Inject;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -23,35 +24,49 @@ public class GetPointsServerlet extends HttpServlet {
     @Inject
     private CheckboxView checkboxView;
 
+    private void writeJsonResponse(HttpServletResponse response,
+                                   ArrayList<PointDTO> pointDTOS,
+                                   BigDecimal maxR,
+                                   ArrayList<BigDecimal> enabledR) throws IOException {
+
+        Gson gson = new Gson();
+
+        GraphResponse graphResponse = new GraphResponse(
+                pointDTOS,
+                maxR,
+                enabledR
+        );
+        String jsonResponse = gson.toJson(graphResponse);
+        response.getWriter().write(jsonResponse);
+    }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
         ArrayList<BigDecimal> enabledR = checkboxView.getEnabledR();
-        if(enabledR.isEmpty())
+        if (enabledR.isEmpty()) {
+            writeJsonResponse(response, new ArrayList<>(), BigDecimal.ZERO, new ArrayList<>());
             return;
+        }
 
-        BigDecimal maxR =enabledR.get(0);
+        BigDecimal maxR = enabledR.get(0);
 
         ArrayList<PointDTO> pointDTOS = new ArrayList<>();
-        for(Point p : controllerBean.getPoints()){
+        for (Point p : controllerBean.getPoints()) {
 
             BigDecimal x = p.getX();
             BigDecimal y = p.getY();
             BigDecimal realR = p.getR();
-            if(!enabledR.contains(realR.stripTrailingZeros()))
+            if (!enabledR.contains(realR.stripTrailingZeros()))
                 continue;
 
             boolean isHit = MathFunctions.hitCheck(x, y, maxR);
-            pointDTOS.add(new PointDTO(x,y, realR, isHit));
+            pointDTOS.add(new PointDTO(x, y, realR, isHit));
 
         }
-        Gson gson = new Gson();
-        GraphResponse graphResponse = new GraphResponse(pointDTOS,maxR,enabledR);
-
-        String jsonResponse = gson.toJson(graphResponse);
-        response.getWriter().write(jsonResponse);
+        writeJsonResponse(response, pointDTOS, maxR, enabledR);
     }
 }
 

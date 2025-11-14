@@ -87,7 +87,6 @@ function setCanvasOnClick() {
         setPoint(x, y, r);
         submitPoint();
         await handlePoint();
-        //window.canvasDrawer.drawDot(x, y, r)
     })
 }
 

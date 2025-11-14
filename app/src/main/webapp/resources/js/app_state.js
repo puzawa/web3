@@ -1,17 +1,34 @@
 class AppState {
     async getPoints() {
         try {
-            const response = await fetch(`/web3/getPoints`, {method: 'GET', headers: {'Accept': 'application/json'}});
-            if (!response.ok)
-                throw new Error(`Server responded with ${response.status}`);
+            const response = await fetch('/web3/getPoints', {
+                method: 'GET',
+                headers: { 'Accept': 'application/json' }
+            });
 
-            const result = await response.json();
-            return result || [];
+            if (!response.ok) {
+                console.error(`Server responded with status ${response.status}`);
+                return [];
+            }
+
+            let result;
+
+            try {
+                result = await response.json();
+            } catch (jsonErr) {
+                console.error("Response was not valid JSON:", jsonErr);
+                return [];
+            }
+
+            if (!result) return [];
+
+            return result;
         } catch (err) {
             console.error('Error calling getPoints:', err);
             return [];
         }
     }
+
 
     async update() {
         const response = await this.getPoints();

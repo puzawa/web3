@@ -75,7 +75,7 @@ class CanvasDrawer {
         ctx.font = '32px Montserrat';
         ctx.textBaseline = 'bottom';
 
-        R = R == null ? 'R' : parseFloat(R).toString();
+        R = ((R == null ) || (R === 0)) ? 'R' : parseFloat(R).toString();
         const R_half = R === 'R' ? 'R/2' : (parseFloat(R) / 2).toString();
 
         const shift = 10;
@@ -179,10 +179,10 @@ class CanvasDrawer {
             return;
 
         for (const p of points) {
-            const color = p.hit ? (p.r == R ? 'green' : 'limegreen') : 'red';
+            const color = p.hit ? (p.r == R ? 'green' : 'limegreen') : (p.r == R ? 'red' : 'lightcoral');
             this.drawDot(p.x, p.y, R, color);
         }
-        //this.drawDot(lastPoint.x, lastPoint.y, R, 'black', true);
+        this.drawDot(lastPoint.x, lastPoint.y, R, 'black', true);
     }
 
     redrawCanvas() {
@@ -196,10 +196,10 @@ class CanvasDrawer {
 
 
         const erColorMap = {
-            1: "rgba(180, 0, 255, 0.8)",
+            1: "rgba(180, 130, 255, 0.8)",
             2: "rgba(140, 0, 200, 0.8)",
             3: "rgba(200, 60, 255, 0.8)",
-            4: "rgba(150, 80, 255, 0.8)",
+            4: "rgba(150, 80, 120, 0.8)",
             5: "rgba(255, 120, 255, 0.8)"
         };
         const color_main = erColorMap[maxR] ?? this.canvas_color;
