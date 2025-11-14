@@ -28,7 +28,7 @@ public class GetPointsServerlet extends HttpServlet {
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
 
-        List<BigDecimal> enabledR = checkboxView.getEnabledR();
+        ArrayList<BigDecimal> enabledR = checkboxView.getEnabledR();
         if(enabledR.isEmpty())
             return;
 
@@ -48,8 +48,7 @@ public class GetPointsServerlet extends HttpServlet {
 
         }
         Gson gson = new Gson();
-
-        GraphResponse graphResponse = new GraphResponse(pointDTOS,maxR);
+        GraphResponse graphResponse = new GraphResponse(pointDTOS,maxR,enabledR);
 
         String jsonResponse = gson.toJson(graphResponse);
         response.getWriter().write(jsonResponse);

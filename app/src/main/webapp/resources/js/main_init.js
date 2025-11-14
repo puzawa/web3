@@ -16,7 +16,7 @@ async function handlePoint() {
     const parts = y_str.split(".");
     const num = parseFloat(y_str);
     let selectedXValue = getSpinnerValue();
-    let selectedRValue = appState.R;
+    let selectedRValue = appState.maxR;
     let selectedRNum = parseInt(selectedRValue);
 
     if (selectedXValue === null ||
@@ -70,7 +70,7 @@ function setCanvasOnClick() {
     window.canvasDrawer.canvas.addEventListener("mousedown", async (event) => {
         event.preventDefault()
 
-        let r = getActiveCheckboxValue();
+        let r = appState.maxR;
         if (r == null) {
             alert("Введите R");
             return

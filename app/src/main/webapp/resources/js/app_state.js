@@ -17,10 +17,12 @@ class AppState {
         const response = await this.getPoints();
         if (response != null) {
             this.points = response.points;
-            this.R = response.maxR;
+            this.maxR = response.maxR;
+            this.enabledRs = response.enabledRs;
         } else {
             this.points = [];
-            this.R = null;
+            this.maxR = null;
+            this.enabledRs = [];
         }
     }
 

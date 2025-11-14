@@ -109,34 +109,40 @@ class CanvasDrawer {
         );
     }
 
-    drawCirclePart(x, y, r, arcStart, arcEnd, ccw) {
+    drawCirclePart(x, y, r, arcStart, arcEnd, ccw, color) {
         const ctx = this.ctx;
         ctx.beginPath();
         ctx.moveTo(x, y);
-        ctx.fillStyle = this.canvas_color;
+        ctx.fillStyle = color;
         ctx.arc(x, y, r, arcStart, arcEnd, ccw);
         ctx.closePath();
         ctx.fill();
     }
 
-    drawRect(x, y, w, h) {
+    drawRect(x, y, w, h, color) {
         const ctx = this.ctx;
         ctx.beginPath();
-        ctx.fillStyle = this.canvas_color;
+        ctx.fillStyle = color;
         ctx.rect(x, y, w, h);
         ctx.fill();
         ctx.closePath();
     }
 
-    drawTriangle(x, y, x2, y2) {
+    drawTriangle(x, y, x2, y2, color) {
         const ctx = this.ctx;
         ctx.beginPath();
-        ctx.fillStyle = this.canvas_color;
+        ctx.fillStyle = color;
         ctx.moveTo(x, y);
         ctx.lineTo(x + x2, y);
         ctx.lineTo(x, y + y2);
         ctx.fill();
         ctx.closePath();
+    }
+
+    drawFigures(rw, rh, color) {
+        this.drawCirclePart(this.cx, this.cy, rh / 2, Math.PI * 1.5, Math.PI * 2, false, color);
+        this.drawRect(this.cx, this.cy, -rw, -rh / 2, color);
+        this.drawTriangle(this.cx, this.cy, -rw / 2, rh, color);
     }
 
     drawDot(x, y, r, color = 'orange', outline = false, lineWidth = 2) {
@@ -186,14 +192,39 @@ class CanvasDrawer {
         ctx.fillRect(0, 0, this.width, this.height);
 
         const points = appState.points;
-        const R = appState.R;
+        const maxR = appState.maxR;
 
-        this.drawCirclePart(this.cx, this.cy, this.rh / 2, Math.PI * 1.5, Math.PI * 2, false);
-        this.drawRect(this.cx, this.cy, -this.rw, -this.rh / 2);
-        this.drawTriangle(this.cx, this.cy, -this.rw / 2, this.rh);
+
+        const erColorMap = {
+            1: "rgba(180, 0, 255, 0.8)",
+            2: "rgba(140, 0, 200, 0.8)",
+            3: "rgba(200, 60, 255, 0.8)",
+            4: "rgba(150, 80, 255, 0.8)",
+            5: "rgba(255, 120, 255, 0.8)"
+        };
+        const color_main = erColorMap[maxR] ?? this.canvas_color;
+
+        this.drawFigures(this.rw, this.rh, color_main);
+
+        const enabledRs = appState.enabledRs;
+        if (enabledRs != null) {
+            for (const er of enabledRs) {
+                const det = maxR / er;
+                if (det === 1.0) continue;
+
+                const color = erColorMap[er] ?? "rgba(200,200,200,0.5)";
+                this.drawFigures(
+                    this.rw / det,
+                    this.rh / det,
+                    color
+                );
+            }
+        }
+
+
         this.drawGrid();
-        this.drawCoords(R);
+        this.drawCoords(maxR);
         this.drawAxis();
-        this.drawDots(R, points);
+        this.drawDots(maxR, points);
     }
 }
