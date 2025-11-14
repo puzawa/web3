@@ -1,0 +1,124 @@
+.clock {
+    border: 5px solid #939393;
+    border-radius: 75%;
+    background: #494746;
+    box-shadow: inset 2px 3px 8px 0 rgba(0, 0, 0, 0.2),
+    2px 3px 8px 0 rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 350px;
+}
+
+.wrap {
+    position: relative;
+    width: 350px;
+    height: 350px;
+    border-radius: 100%;
+}
+
+.minute,
+.hour {
+    position: absolute;
+    z-index: 1;
+    top: -28.6%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 6px;
+    height: 100px;
+    margin: auto;
+    transform: rotate(0deg);
+    transform-origin: bottom center;
+    background: #e8e3e3;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.4);
+}
+
+.minute {
+    position: absolute;
+    top: -38%;
+    left: 0;
+    width: 4px;
+    height: 130px;
+    transform: rotate(90deg);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.4);
+}
+
+.second {
+    position: absolute;
+    z-index: 1;
+    top: -26%;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 2px;
+    height: 90px;
+    margin: auto;
+    transform: rotate(180deg);
+    transform-origin: bottom center;
+    border-radius: 4px;
+    background: #e8e3e3;
+}
+
+.dot {
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 12px;
+    height: 12px;
+    margin: auto;
+    border: 2px solid #1B1B1B;
+    border-radius: 100px;
+    background: #FFF;
+}
+
+.d-flex.justify-content-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.d-flex.flex-direction-column {
+    display: flex;
+    flex-direction: column;
+}
+
+#time-container {
+    font-family: "Century Gothic", serif;
+    color: #e8e3e3;
+    background-color: #494746;
+    border: 5px solid #939393;
+    box-shadow: inset 2px 3px 8px 0 rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    padding: 50px 10px;
+    gap: 30px
+}
+
+#date-text-container {
+    font-size: 30px;
+}
+
+#js-date {
+    display: inline-block;
+}
+
+#js-date::first-letter {
+    text-transform: uppercase;
+}
+
+#padding-30px {
+    width: 30px;
+}
+
+#right-div {
+    height: 100%;
+    gap: 20px;
+}
+
+#main-container {
+    height: 360px;
+}

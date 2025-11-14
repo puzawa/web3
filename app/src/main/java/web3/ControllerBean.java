@@ -64,7 +64,6 @@ public class ControllerBean implements Serializable {
         boolean hit = MathFunctions.hitCheck(point.getX(), point.getY(), point.getR());
         point.setCheck(hit);
         ArrayList<BigDecimal> rs = checkboxView.get().getEnabledR();
-       // rs.sort(Collections.reverseOrder());
 
         for(BigDecimal r : rs) {
             boolean little_hit = MathFunctions.hitCheck(point.getX(), point.getY(), r);
