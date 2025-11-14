@@ -1,8 +1,8 @@
 package web3.view;
 
 import jakarta.enterprise.context.SessionScoped;
-import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Named;
+
 import java.io.Serializable;
 
 @Named("spinnerView")
@@ -18,3 +18,12 @@ public class SpinnerView implements Serializable {
         this.number = number;
     }
 }
+
+/*
+* реактивный бэк
+* ProjectReactor для бд R2DBC
+*
+*
+*
+*
+* */

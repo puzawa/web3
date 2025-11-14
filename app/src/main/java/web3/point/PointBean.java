@@ -4,7 +4,6 @@ import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import web3.ControllerBean;
-import web3.util.MathFunctions;
 import web3.util.Validator;
 
 import java.io.Serializable;
@@ -59,16 +58,17 @@ public class PointBean implements Serializable {
             return;
         }
 
-        Point p = new Point();
+        for(BigDecimal newR : controllerBean.getEnabledRs()) {
+            Point p = new Point();
+            p.setX(x);
+            p.setY(y);
+            p.setR(newR);
+            p.setDate(localDateTime);
 
-        p.setX(x);
-        p.setY(y);
-        p.setR(r);
-        p.setDate(localDateTime);
-
-        if (hidden)
-            controllerBean.addPoint(p);
-        else
-            controllerBean.submitPoint(p);
+            if (hidden)
+                controllerBean.addPoint(p);
+            else
+                controllerBean.submitPoint(p);
+        }
     }
 }

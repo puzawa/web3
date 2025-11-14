@@ -110,7 +110,7 @@
             <h:form id="clearForm">
                 <p:commandButton value="Clear" action="#{controllerBean.clear}"
                                  update=":table"
-                                 oncomplete="handlePointOnComplete()"/>
+                                 oncomplete="handlePointOnComplete(true)"/>
             </h:form>
 
             <p:button value="На главную"  outcome="clock" />
@@ -125,12 +125,12 @@
 
         <p:commandButton id="saveButton" value="Save Point" action="#{point.submit(false)}" styleClass="hidden-button"
                          update=":table :pointForm"
-                         oncomplete="handlePointOnComplete(); reapplyValidation();"/>
+                         oncomplete="handlePointOnComplete(true); reapplyValidation();"/>
 
         <p:commandButton id="saveButtonHidden" value="Save Point Hidden" action="#{point.submit(true)}"
                          styleClass="hidden-button"
                          update=":table"
-                         oncomplete="handlePointOnComplete();"/>
+                         oncomplete="handlePointOnComplete(true);"/>
     </h:form>
 
     <p:dialog id="serverDownDialog"

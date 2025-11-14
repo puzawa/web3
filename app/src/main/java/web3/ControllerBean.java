@@ -111,24 +111,27 @@ public class ControllerBean implements Serializable {
         textInputView.get().setInput("");
     }
 
+    public ArrayList<BigDecimal> getEnabledRs() {
+        return checkboxView.get().getEnabledR();
+    }
     public void addPoint(Point point) {
         checkDbMerge();
         long start = System.nanoTime();
 
+
         boolean hit = MathFunctions.hitCheck(point.getX(), point.getY(), point.getR());
         point.setCheck(hit);
-        ArrayList<BigDecimal> rs = checkboxView.get().getEnabledR();
-
-        for (BigDecimal r : rs) {
-            boolean little_hit = MathFunctions.hitCheck(point.getX(), point.getY(), r);
-            if (little_hit) {
-                point.setR(r.stripTrailingZeros());
-                point.setCheck(true);
-            }
-        }
+//        ArrayList<BigDecimal> rs = checkboxView.get().getEnabledR();
+//
+//        for (BigDecimal r : rs) {
+//            boolean little_hit = MathFunctions.hitCheck(point.getX(), point.getY(), r);
+//            if (little_hit) {
+//                point.setR(r.stripTrailingZeros());
+//                point.setCheck(true);
+//            }
+//        }
 
         point.setDuration(System.nanoTime() - start);
-
         if (pointDAO.isDBAvailable()) {
             pointDAO.save(point);
         }

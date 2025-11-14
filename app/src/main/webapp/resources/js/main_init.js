@@ -5,12 +5,15 @@ function setSubmitButtonDisabled(isDisabled) {
     }
 }
 
- function drawPoints() {
-     window.canvasDrawer.redrawCanvas();
+function drawPoints() {
+    window.canvasDrawer.redrawCanvas();
 }
 
-async function handlePoint() {
-    await appState.update();
+async function handlePoint(updateFull = false) {
+    if (updateFull)
+        await appState.update();
+    else
+        await appState.updateRs();
     drawPoints();
     const y_str = getTextInputValue();
     const parts = y_str.split(".");
@@ -24,7 +27,7 @@ async function handlePoint() {
         ['-', ''].includes(y_str) ||
         (!isNaN(num) && (num > 5 || num < -3)) ||
         parts.length > 2 ||
-        (( (num === 5 && parts[0] === '5' )|| (num === -3 && parts[0] === '-3')) && (parts.length > 1 && !/^0*$/.test(parts[1])))
+        (((num === 5 && parts[0] === '5') || (num === -3 && parts[0] === '-3')) && (parts.length > 1 && !/^0*$/.test(parts[1])))
     ) {
         setSubmitButtonDisabled(true);
     } else {
@@ -86,7 +89,6 @@ function setCanvasOnClick() {
 
         setPoint(x, y, r);
         submitPointHidden();
-        await handlePoint();
     })
 }
 
@@ -94,6 +96,7 @@ function reapplyValidation() {
     const input = document.getElementById('pointForm:textInput');
     if (input) setTextInputNumericValidation(input);
 }
+
 document.addEventListener("DOMContentLoaded", async () => {
 
     setInterval(checkServer, 5000);
@@ -110,20 +113,21 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     reapplyValidation();
 
-   await handlePoint();
+    await handlePoint(true);
 });
 
-async function handlePointOnComplete() {
-    await handlePoint();
+async function handlePointOnComplete(updateState) {
+    await handlePoint(updateState);
 
 }
+
 async function handlePointAjax(data) {
     if (data.status === "success") {
-        await handlePointOnComplete();
+        await handlePointOnComplete(true);
     }
 }
 
 async function submitForm() {
     submitPoint();
-    await handlePoint();
+    await handlePoint(false);
 }
