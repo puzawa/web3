@@ -121,7 +121,7 @@ public class ControllerBean implements Serializable {
 
         processPendingQueue().subscribeOn(Schedulers.boundedElastic()).subscribe();
 
-        SseServlet.broadcast("asd");
+        SseServlet.broadcast("");
 
     }
 
@@ -136,6 +136,7 @@ public class ControllerBean implements Serializable {
                     .subscribeOn(Schedulers.boundedElastic())
                     .subscribe();
         }
+        SseServlet.broadcast("");
     }
 
     public List<Point> getPoints() {
