@@ -5,6 +5,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.inject.Provider;
+import reactor.core.Disposable;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import web3.point.Point;
 import web3.point.PointDAO;
 import web3.util.MathFunctions;
@@ -14,9 +18,11 @@ import web3.view.TextInputView;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Named("controllerBean")
 @ApplicationScoped
@@ -32,96 +38,61 @@ public class ControllerBean implements Serializable {
     @Inject
     private PointDAO pointDAO;
 
-    private List<Point> points = new ArrayList<>();
+    private final List<Point> points = new CopyOnWriteArrayList<>();
 
-    private boolean dbMerged = false;
+    private final Queue<Point> pendingQueue = new ConcurrentLinkedQueue<>();
+
+    private Disposable syncTask;
 
     @PostConstruct
     public void init() {
-        checkDbMerge();
+        loadFromDb();
+        startBackgroundSync();
     }
 
-    public void mergePointsWithDB() {
-        if (!pointDAO.isDBAvailable()) {
-            System.err.println("DB not available. Cannot merge points.");
-            return;
-        }
-
-        if (dbMerged) {
-            return;
-        }
-
-        List<Point> dbPoints;
-        try {
-            dbPoints = pointDAO.getAll().collectList().block();
-            if (dbPoints == null) dbPoints = new ArrayList<>();
-        } catch (Exception e) {
-            System.err.println("Error reading from DB: " + e.getMessage());
-            return;
-        }
-
-        System.out.println("DB has " + dbPoints.size() + " points.");
-
-        Set<Long> dbIds = dbPoints.stream()
-                .map(Point::getId)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-
-        for (Point dbPoint : dbPoints) {
-            boolean exists = points.stream()
-                    .anyMatch(p -> p.getId() != null && p.getId().equals(dbPoint.getId()));
-            if (!exists) {
-                points.add(dbPoint);
-            }
-        }
-
-        for (Point point : points) {
-            if (point.getId() == null || !dbIds.contains(point.getId())) {
-                try {
-                    Long newId = pointDAO.add(point).block();
-                    point.setId(newId);
-                    dbIds.add(newId);
-                } catch (Exception e) {
-                    System.err.println("Error syncing point to DB: " + e.getMessage());
-                }
-            }
-        }
-
-        dbMerged = true;
-        System.out.println("Merged points with DB. Total in-memory: " + points.size());
+    private void startBackgroundSync() {
+        syncTask = Flux.interval(Duration.ofSeconds(5))
+                .onBackpressureDrop()
+                .filter(tick -> !pendingQueue.isEmpty())
+                .filter(tick -> pointDAO.isDBAvailable())
+                .publishOn(Schedulers.boundedElastic())
+                .flatMap(tick -> processPendingQueue())
+                .subscribe();
     }
 
-    public List<Point> getPointsReversed() {
-        List<Point> reversed = new ArrayList<>(points);
-        Collections.reverse(reversed);
-        return reversed;
+    private Mono<Void> processPendingQueue() {
+        return Mono.defer(() -> {
+            Point p = pendingQueue.peek();
+            if (p == null) return Mono.empty();
+
+            return pointDAO.add(p)
+                    .doOnNext(newId -> {
+                        p.setId(newId);
+                        pendingQueue.poll();
+                        System.out.println("Synced pending point to DB. ID: " + newId);
+                    })
+                    .then(Mono.defer(this::processPendingQueue))
+                    .onErrorResume(e -> {
+                        System.err.println("DB Sync failed (will retry later): " + e.getMessage());
+                        return Mono.empty();
+                    });
+        });
     }
 
-    void checkDbMerge() {
-        if (pointDAO.isDBAvailable()) {
-            if (!dbMerged) {
-                mergePointsWithDB();
-            }
-        } else {
-            dbMerged = false;
-        }
-    }
+    private void loadFromDb() {
+        if (!pointDAO.isDBAvailable()) return;
 
-    public List<Point> getPoints() {
-        checkDbMerge();
-        return points;
-    }
-
-    public void clear() {
-        checkDbMerge();
-        if (pointDAO.isDBAvailable()) {
-            try {
-                pointDAO.deleteAll().block();
-            } catch (Exception e) {
-                System.err.println("Failed to clear DB: " + e.getMessage());
-            }
-        }
-        points.clear();
+        pointDAO.getAll()
+                .collectList()
+                .subscribeOn(Schedulers.boundedElastic())
+                .subscribe(dbPoints -> {
+                    if (dbPoints != null) {
+                        Set<Point> pendingSet = new HashSet<>(pendingQueue);
+                        points.clear();
+                        points.addAll(dbPoints);
+                        points.addAll(pendingSet);
+                    }
+                });
     }
 
     public void submitPoint(Point point) {
@@ -130,12 +101,7 @@ public class ControllerBean implements Serializable {
         textInputView.get().setInput("");
     }
 
-    public ArrayList<BigDecimal> getEnabledRs() {
-        return checkboxView.get().getEnabledR();
-    }
-
     public void addPoint(Point point) {
-        checkDbMerge();
         long start = System.nanoTime();
 
         boolean hit = MathFunctions.hitCheck(point.getX(), point.getY(), point.getR());
@@ -143,15 +109,34 @@ public class ControllerBean implements Serializable {
         point.setDate(LocalDateTime.now());
         point.setDuration(System.nanoTime() - start);
 
-        if (pointDAO.isDBAvailable()) {
-            try {
-                Long id = pointDAO.add(point).block();
-                point.setId(id);
-            } catch (Exception e) {
-                System.err.println("Failed to save point to DB: " + e.getMessage());
-            }
-        }
-
         points.add(point);
+        pendingQueue.add(point);
+
+        processPendingQueue().subscribeOn(Schedulers.boundedElastic()).subscribe();
+    }
+
+    public void clear() {
+        points.clear();
+        pendingQueue.clear();
+
+        if (pointDAO.isDBAvailable()) {
+            pointDAO.deleteAll()
+                    .subscribeOn(Schedulers.boundedElastic())
+                    .subscribe();
+        }
+    }
+
+    public List<Point> getPoints() {
+        return points;
+    }
+
+    public List<Point> getPointsReversed() {
+        List<Point> reversed = new ArrayList<>(points);
+        Collections.reverse(reversed);
+        return reversed;
+    }
+
+    public ArrayList<BigDecimal> getEnabledRs() {
+        return checkboxView.get().getEnabledR();
     }
 }
