@@ -18,12 +18,3 @@ public class SpinnerView implements Serializable {
         this.number = number;
     }
 }
-
-/*
-* реактивный бэк
-* ProjectReactor для бд R2DBC
-*
-*
-*
-*
-* */
