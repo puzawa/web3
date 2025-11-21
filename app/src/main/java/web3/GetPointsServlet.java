@@ -1,6 +1,8 @@
 package web3;
 
 import com.google.gson.Gson;
+import com.google.common.hash.Hashing;
+import com.google.common.hash.HashCode;
 import jakarta.inject.Inject;
 import jakarta.inject.Provider;
 import jakarta.servlet.ServletException;
@@ -8,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import web3.point.GraphResponse;
 import web3.point.Point;
 import web3.point.PointDTO;
@@ -28,7 +31,7 @@ public class GetPointsServlet extends HttpServlet {
     @Inject
     private Provider<CheckboxView> checkboxView;
 
-    private void writeJsonResponse(HttpServletResponse response,
+    private String getJsonResponse(HttpServletResponse response,
                                    ArrayList<PointDTO> pointDTOS,
                                    BigDecimal maxR,
                                    ArrayList<BigDecimal> enabledR) throws IOException {
@@ -40,8 +43,8 @@ public class GetPointsServlet extends HttpServlet {
                 maxR,
                 enabledR
         );
-        String jsonResponse = gson.toJson(graphResponse);
-        response.getWriter().write(jsonResponse);
+      return gson.toJson(graphResponse);
+
     }
 
     @Override
@@ -51,7 +54,9 @@ public class GetPointsServlet extends HttpServlet {
 
         ArrayList<BigDecimal> enabledR = checkboxView.get().getEnabledR();
         if (enabledR.isEmpty()) {
-            writeJsonResponse(response, new ArrayList<>(), BigDecimal.ZERO, new ArrayList<>());
+            String jsonResponse = getJsonResponse(response, new ArrayList<>(), BigDecimal.ZERO, new ArrayList<>());
+            response.getWriter().write(jsonResponse);
+
             return;
         }
 
@@ -72,7 +77,19 @@ public class GetPointsServlet extends HttpServlet {
         }
 
         Collections.reverse(pointDTOS);
-        writeJsonResponse(response, pointDTOS, maxR, enabledR);
+        String jsonResponse = getJsonResponse(response, pointDTOS, maxR, enabledR);
+
+        HashCode jsonHash = Hashing.murmur3_128().hashUnencodedChars(jsonResponse);
+
+        HttpSession session = request.getSession(true);
+        Long previousHash = (Long) session.getAttribute("jsonHash");
+
+        if (previousHash != null && previousHash.equals(jsonHash.asLong())) {
+           // response.setStatus(HttpServletResponse.SC_NO_CONTENT); // 204 No Content
+        } else {
+            session.setAttribute("jsonHash", jsonHash.asLong());
+            response.getWriter().write(jsonResponse);
+        }
     }
 }
 
