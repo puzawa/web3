@@ -120,6 +120,9 @@ public class ControllerBean implements Serializable {
         pendingQueue.add(point);
 
         processPendingQueue().subscribeOn(Schedulers.boundedElastic()).subscribe();
+
+        SseServlet.broadcast("asd");
+
     }
 
     public void clear() {

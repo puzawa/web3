@@ -102,6 +102,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     setInterval(checkServer, 5000);
     checkServer();
 
+    const evtSource = new EventSource("/web3/sse");
+    evtSource.onmessage = function(event) {
+        triggerPoll();
+    };
+
     window.appState = new AppState();
     await window.appState.init();
 
@@ -114,10 +119,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     reapplyValidation();
 
     await handlePoint(true);
-
-    setInterval(function() {
-        triggerPoll();
-    }, 3000);
 });
 
 async function handlePointOnComplete(updateState) {
