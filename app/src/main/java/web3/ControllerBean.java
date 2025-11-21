@@ -44,6 +44,8 @@ public class ControllerBean implements Serializable {
 
     private Disposable syncTask;
 
+    private final Object pointsLock = new Object();
+
     @PostConstruct
     public void init() {
         loadFromDb();
@@ -82,17 +84,20 @@ public class ControllerBean implements Serializable {
     private void loadFromDb() {
         if (!pointDAO.isDBAvailable()) return;
 
-        pointDAO.getAll()
+       pointDAO.getAll()
                 .collectList()
                 .subscribeOn(Schedulers.boundedElastic())
                 .subscribe(dbPoints -> {
                     if (dbPoints != null) {
                         Set<Point> pendingSet = new HashSet<>(pendingQueue);
-                        points.clear();
-                        points.addAll(dbPoints);
-                        points.addAll(pendingSet);
+                        synchronized (pointsLock) {
+                            points.clear();
+                            points.addAll(dbPoints);
+                            points.addAll(pendingSet);
+                        }
                     }
                 });
+
     }
 
     public void submitPoint(Point point) {
@@ -109,7 +114,9 @@ public class ControllerBean implements Serializable {
         point.setDate(LocalDateTime.now());
         point.setDuration(System.nanoTime() - start);
 
-        points.add(point);
+        synchronized (pointsLock) {
+            points.add(point);
+        }
         pendingQueue.add(point);
 
         processPendingQueue().subscribeOn(Schedulers.boundedElastic()).subscribe();
