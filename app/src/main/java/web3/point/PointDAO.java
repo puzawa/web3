@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 
 @ApplicationScoped
 public class PointDAO {
@@ -50,34 +51,38 @@ public class PointDAO {
     public Mono<List<Long>> addAll(List<Point> points) {
         if (points.isEmpty()) return Mono.just(List.of());
 
-        String sql = """
-                    INSERT INTO points (x, y, r, duration, created_date, is_hit)
-                    VALUES ($1, $2, $3, $4, $5, $6)
-                    RETURNING id
-                """;
-
         return Mono.usingWhen(
                 connectionFactory.create(),
                 conn -> {
-                    Statement stmt = conn.createStatement(sql);
+
+                    Batch batch = conn.createBatch();
 
                     for (Point p : points) {
-                        stmt.bind(0, p.getX())
-                                .bind(1, p.getY())
-                                .bind(2, p.getR())
-                                .bind(3, p.getDuration())
-                                .bind(4, p.getDate())
-                                .bind(5, p.getCheck())
-                                .add();
+                        String sql = String.format(
+                                Locale.US,
+                                "INSERT INTO points (x, y, r, duration, created_date, is_hit) " +
+                                        "VALUES (%f, %f, %f, %d, '%s', %s) RETURNING id",
+                                p.getX(),
+                                p.getY(),
+                                p.getR(),
+                                p.getDuration(),
+                                p.getDate().toString(),
+                                p.getCheck()
+                        );
+
+                        batch.add(sql);
                     }
 
-                    return Flux.from(stmt.execute())
-                            .flatMap(result -> result.map((row, meta) -> row.get("id", Long.class)))
+                    return Flux.from(batch.execute())
+                            .flatMap(result -> result
+                                    .map((row, meta) -> row.get("id", Long.class))
+                            )
                             .collectList();
                 },
                 Connection::close
         );
     }
+
 
 
     public Flux<Point> getAll() {
