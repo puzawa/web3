@@ -63,32 +63,48 @@ public class ControllerBean implements Serializable {
     }
 
     private Mono<Void> processPendingQueue() {
+        final int CHUNK_SIZE = 10_000;
+
         return Mono.defer(() -> {
             if (pendingQueue.isEmpty()) return Mono.empty();
 
-            List<Point> batch = new ArrayList<>();
+            List<Point> all = new ArrayList<>();
             Point p;
             while ((p = pendingQueue.poll()) != null) {
-                batch.add(p);
+                all.add(p);
             }
 
-            if (batch.isEmpty()) return Mono.empty();
+            if (all.isEmpty()) return Mono.empty();
 
-            return pointDAO.addAll(batch)
-                    .doOnNext(ids -> {
-                        for (int i = 0; i < batch.size(); i++) {
-                            batch.get(i).setId(ids.get(i));
-                            System.out.println("Synced point to DB. ID: " + ids.get(i));
-                        }
-                    })
-                    .then()
-                    .onErrorResume(e -> {
-                        pendingQueue.addAll(batch);
-                        System.err.println("DB batch sync failed (will retry later): " + e.getMessage());
-                        return Mono.empty();
-                    });
+            List<List<Point>> chunks = new ArrayList<>();
+            for (int i = 0; i < all.size(); i += CHUNK_SIZE) {
+                chunks.add(all.subList(i, Math.min(i + CHUNK_SIZE, all.size())));
+            }
+
+            return Flux.fromIterable(chunks)
+                    .concatMap(chunk -> sendChunk(chunk)
+                            .then(Mono.delay(Duration.ofMillis(200)))
+                    )
+                    .then();
         });
     }
+
+    private Mono<Void> sendChunk(List<Point> chunk) {
+        return pointDAO.addAll(chunk)
+                .doOnNext(ids -> {
+                    for (int i = 0; i < chunk.size(); i++) {
+                        chunk.get(i).setId(ids.get(i));
+                        System.out.println("Synced point to DB. ID: " + ids.get(i));
+                    }
+                })
+                .then()
+                .onErrorResume(e -> {
+                    pendingQueue.addAll(chunk);
+                    System.err.println("DB batch sync failed (will retry later): " + e.getMessage());
+                    return Mono.empty();
+                });
+    }
+
 
 
     private void loadFromDb() {
