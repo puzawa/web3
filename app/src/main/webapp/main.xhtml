@@ -107,12 +107,16 @@
                 </p:column>
             </p:dataTable>
 
-            <h:form id="clearForm">
+            <h:form id="subForm">
                 <p:commandButton value="Clear" action="#{controllerBean.clear}"
                                  update=":table"
                                  oncomplete="handlePointOnComplete(true)"/>
-            </h:form>
 
+                <p:remoteCommand name="triggerPoll"
+                                 update=":table"
+                                 oncomplete="handlePointOnComplete(true)"/>
+
+            </h:form>
             <p:button value="На главную"  outcome="clock" />
 
         </div>

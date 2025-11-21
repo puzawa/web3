@@ -123,7 +123,9 @@ public class ControllerBean implements Serializable {
     }
 
     public void clear() {
-        points.clear();
+        synchronized (pointsLock) {
+            points.clear();
+        }
         pendingQueue.clear();
 
         if (pointDAO.isDBAvailable()) {
@@ -134,7 +136,9 @@ public class ControllerBean implements Serializable {
     }
 
     public List<Point> getPoints() {
-        return points;
+        synchronized (pointsLock) {
+            return points;
+        }
     }
 
     public List<Point> getPointsReversed() {

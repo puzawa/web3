@@ -114,6 +114,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     reapplyValidation();
 
     await handlePoint(true);
+
+    setInterval(function() {
+        triggerPoll();
+    }, 3000);
 });
 
 async function handlePointOnComplete(updateState) {

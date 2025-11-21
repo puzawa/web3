@@ -27,6 +27,8 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.9")
 
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.guava:guava:32.1.2-jre")
+
 
     implementation("com.fasterxml.jackson.core:jackson-databind:2.16.2")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.16.2")
