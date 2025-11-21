@@ -12,8 +12,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 @WebServlet("/sse")
 public class SseServlet extends HttpServlet {
-
-    // Keep track of all connected clients
     private static final Set<PrintWriter> clients = new CopyOnWriteArraySet<>();
 
     @Override
