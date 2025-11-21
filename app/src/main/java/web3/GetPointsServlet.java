@@ -78,18 +78,16 @@ public class GetPointsServlet extends HttpServlet {
 
         Collections.reverse(pointDTOS);
         String jsonResponse = getJsonResponse(response, pointDTOS, maxR, enabledR);
-
-        HashCode jsonHash = Hashing.murmur3_128().hashUnencodedChars(jsonResponse);
-
-        HttpSession session = request.getSession(true);
-        Long previousHash = (Long) session.getAttribute("jsonHash");
-
-        if (previousHash != null && previousHash.equals(jsonHash.asLong())) {
-           // response.setStatus(HttpServletResponse.SC_NO_CONTENT); // 204 No Content
-        } else {
-            session.setAttribute("jsonHash", jsonHash.asLong());
-            response.getWriter().write(jsonResponse);
-        }
+        response.getWriter().write(jsonResponse);
+//        HashCode jsonHash = Hashing.murmur3_128().hashUnencodedChars(jsonResponse);
+//        HttpSession session = request.getSession(true);
+//        Long previousHash = (Long) session.getAttribute("jsonHash");
+//        if (previousHash != null && previousHash.equals(jsonHash.asLong())) {
+//           // response.setStatus(HttpServletResponse.SC_NO_CONTENT); // 204 No Content
+//        } else {
+//            session.setAttribute("jsonHash", jsonHash.asLong());
+//
+//        }
     }
 }
 
