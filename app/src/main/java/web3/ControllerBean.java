@@ -14,6 +14,7 @@ import web3.view.TextInputView;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -32,14 +33,12 @@ public class ControllerBean implements Serializable {
     private PointDAO pointDAO;
 
     private List<Point> points = new ArrayList<>();
+
     private boolean dbMerged = false;
 
     @PostConstruct
     public void init() {
-        if (pointDAO.isDBAvailable()) {
-            mergePointsWithDB();
-            dbMerged = true;
-        }
+        checkDbMerge();
     }
 
     public void mergePointsWithDB() {
@@ -52,7 +51,15 @@ public class ControllerBean implements Serializable {
             return;
         }
 
-        List<Point> dbPoints = pointDAO.loadAll();
+        List<Point> dbPoints;
+        try {
+            dbPoints = pointDAO.getAll().collectList().block();
+            if (dbPoints == null) dbPoints = new ArrayList<>();
+        } catch (Exception e) {
+            System.err.println("Error reading from DB: " + e.getMessage());
+            return;
+        }
+
         System.out.println("DB has " + dbPoints.size() + " points.");
 
         Set<Long> dbIds = dbPoints.stream()
@@ -70,8 +77,13 @@ public class ControllerBean implements Serializable {
 
         for (Point point : points) {
             if (point.getId() == null || !dbIds.contains(point.getId())) {
-                pointDAO.save(point);
-                dbIds.add(point.getId());
+                try {
+                    Long newId = pointDAO.add(point).block();
+                    point.setId(newId);
+                    dbIds.add(newId);
+                } catch (Exception e) {
+                    System.err.println("Error syncing point to DB: " + e.getMessage());
+                }
             }
         }
 
@@ -85,13 +97,16 @@ public class ControllerBean implements Serializable {
         return reversed;
     }
 
-    void checkDbMerge(){
+    void checkDbMerge() {
         if (pointDAO.isDBAvailable()) {
-            if (!dbMerged)
+            if (!dbMerged) {
                 mergePointsWithDB();
+            }
+        } else {
+            dbMerged = false;
         }
-        else dbMerged = false;
     }
+
     public List<Point> getPoints() {
         checkDbMerge();
         return points;
@@ -100,7 +115,11 @@ public class ControllerBean implements Serializable {
     public void clear() {
         checkDbMerge();
         if (pointDAO.isDBAvailable()) {
-            pointDAO.deleteAll();
+            try {
+                pointDAO.deleteAll().block();
+            } catch (Exception e) {
+                System.err.println("Failed to clear DB: " + e.getMessage());
+            }
         }
         points.clear();
     }
@@ -114,29 +133,25 @@ public class ControllerBean implements Serializable {
     public ArrayList<BigDecimal> getEnabledRs() {
         return checkboxView.get().getEnabledR();
     }
+
     public void addPoint(Point point) {
         checkDbMerge();
         long start = System.nanoTime();
 
-
         boolean hit = MathFunctions.hitCheck(point.getX(), point.getY(), point.getR());
         point.setCheck(hit);
-//        ArrayList<BigDecimal> rs = checkboxView.get().getEnabledR();
-//
-//        for (BigDecimal r : rs) {
-//            boolean little_hit = MathFunctions.hitCheck(point.getX(), point.getY(), r);
-//            if (little_hit) {
-//                point.setR(r.stripTrailingZeros());
-//                point.setCheck(true);
-//            }
-//        }
-
+        point.setDate(LocalDateTime.now());
         point.setDuration(System.nanoTime() - start);
+
         if (pointDAO.isDBAvailable()) {
-            pointDAO.save(point);
+            try {
+                Long id = pointDAO.add(point).block();
+                point.setId(id);
+            } catch (Exception e) {
+                System.err.println("Failed to save point to DB: " + e.getMessage());
+            }
         }
 
         points.add(point);
     }
 }
-//        this.checkboxView = CDI.current().select(CheckboxView.class).get();

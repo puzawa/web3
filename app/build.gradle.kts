@@ -33,6 +33,13 @@ dependencies {
 
     providedCompile("jakarta.ws.rs:jakarta.ws.rs-api:3.1.0")
 
+    implementation("io.projectreactor:reactor-core:3.6.3")
+
+    implementation("io.r2dbc:r2dbc-spi:1.0.0.RELEASE")
+    implementation("io.r2dbc:r2dbc-pool:1.0.0.RELEASE")
+
+    implementation("org.postgresql:r2dbc-postgresql:1.0.5.RELEASE")
+
 }
 
 tasks.withType<JavaCompile> {

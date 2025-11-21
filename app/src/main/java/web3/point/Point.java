@@ -1,36 +1,42 @@
 package web3.point;
-import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Entity
-@Table(name = "points")
 public class Point {
-    @Column(precision = 19, scale = 4)
+
     private BigDecimal x;
-    @Column(precision = 19, scale = 4)
     private BigDecimal y;
-    @Column(precision = 19, scale = 4)
     private BigDecimal r;
 
     private long duration;
-
-    @Column(name = "created_date")
     private LocalDateTime date;
 
-    @Transient
-    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
-
-    @Column(name = "is_hit")
     private boolean check;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public Point() {
+    private static final DateTimeFormatter formatter =
+            DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+
+    public Point() {}
+
+    public Point(BigDecimal x, BigDecimal y, BigDecimal r,
+                 long duration, LocalDateTime date,
+                 boolean check, Long id) {
+        this.x = x;
+        this.y = y;
+        this.r = r;
+        this.duration = duration;
+        this.date = date;
+        this.check = check;
+        this.id = id;
+    }
+
+    public Point(BigDecimal x, BigDecimal y, BigDecimal r,
+                 long duration, LocalDateTime date,
+                 boolean check) {
+        this(x, y, r, duration, date, check, null);
     }
 
     public BigDecimal getX() {
@@ -83,10 +89,6 @@ public class Point {
 
     public DateTimeFormatter getFormatter() {
         return formatter;
-    }
-
-    public void setFormatter(DateTimeFormatter formatter) {
-        this.formatter = formatter;
     }
 
     public String beautifulDate() {
