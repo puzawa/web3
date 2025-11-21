@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,16 +21,16 @@ public class PointDAO {
     private CfAppGetter cfAppGetter;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         this.connectionFactory = cfAppGetter.getConnectionFactory();
     }
 
     public Mono<Long> add(Point p) {
         String sql = """
-            INSERT INTO points (x, y, r, duration, created_date, is_hit)
-            VALUES ($1, $2, $3, $4, $5, $6)
-            RETURNING id
-        """;
+                    INSERT INTO points (x, y, r, duration, created_date, is_hit)
+                    VALUES ($1, $2, $3, $4, $5, $6)
+                    RETURNING id
+                """;
 
         return Mono.usingWhen(
                 connectionFactory.create(),
@@ -46,6 +47,39 @@ public class PointDAO {
         );
     }
 
+    public Mono<List<Long>> addAll(List<Point> points) {
+        if (points.isEmpty()) return Mono.just(List.of());
+
+        String sql = """
+                    INSERT INTO points (x, y, r, duration, created_date, is_hit)
+                    VALUES ($1, $2, $3, $4, $5, $6)
+                    RETURNING id
+                """;
+
+        return Mono.usingWhen(
+                connectionFactory.create(),
+                conn -> {
+                    Statement stmt = conn.createStatement(sql);
+
+                    for (Point p : points) {
+                        stmt.bind(0, p.getX())
+                                .bind(1, p.getY())
+                                .bind(2, p.getR())
+                                .bind(3, p.getDuration())
+                                .bind(4, p.getDate())
+                                .bind(5, p.getCheck())
+                                .add();
+                    }
+
+                    return Flux.from(stmt.execute())
+                            .flatMap(result -> result.map((row, meta) -> row.get("id", Long.class)))
+                            .collectList();
+                },
+                Connection::close
+        );
+    }
+
+
     public Flux<Point> getAll() {
         String sql = "SELECT id, x, y, r, duration, created_date, is_hit FROM points";
         return Flux.usingWhen(
@@ -55,6 +89,7 @@ public class PointDAO {
                 Connection::close
         );
     }
+
     public Mono<Long> deleteAll() {
         String sql = "DELETE FROM points";
         return Mono.usingWhen(

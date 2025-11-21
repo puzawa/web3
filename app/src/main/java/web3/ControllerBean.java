@@ -64,22 +64,32 @@ public class ControllerBean implements Serializable {
 
     private Mono<Void> processPendingQueue() {
         return Mono.defer(() -> {
-            Point p = pendingQueue.peek();
-            if (p == null) return Mono.empty();
+            if (pendingQueue.isEmpty()) return Mono.empty();
 
-            return pointDAO.add(p)
-                    .doOnNext(newId -> {
-                        p.setId(newId);
-                        pendingQueue.poll();
-                        System.out.println("Synced pending point to DB. ID: " + newId);
+            List<Point> batch = new ArrayList<>();
+            Point p;
+            while ((p = pendingQueue.poll()) != null) {
+                batch.add(p);
+            }
+
+            if (batch.isEmpty()) return Mono.empty();
+
+            return pointDAO.addAll(batch)
+                    .doOnNext(ids -> {
+                        for (int i = 0; i < batch.size(); i++) {
+                            batch.get(i).setId(ids.get(i));
+                            System.out.println("Synced point to DB. ID: " + ids.get(i));
+                        }
                     })
-                    .then(Mono.defer(this::processPendingQueue))
+                    .then()
                     .onErrorResume(e -> {
-                        System.err.println("DB Sync failed (will retry later): " + e.getMessage());
+                        pendingQueue.addAll(batch);
+                        System.err.println("DB batch sync failed (will retry later): " + e.getMessage());
                         return Mono.empty();
                     });
         });
     }
+
 
     private void loadFromDb() {
         if (!pointDAO.isDBAvailable()) return;
